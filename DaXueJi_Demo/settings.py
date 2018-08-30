@@ -97,6 +97,7 @@ DATABASES = {
         'PASSWORD': '12345678',      #密码
         'HOST': '127.0.0.1',    #IP
         'PORT': '3306',                   #端口
+        'OPTIONS': {'init_command': 'SET default_storage_engine=INNODB,character_set_connection=utf8,collation_connection=utf8_unicode_ci;' }
     }
 }
 
