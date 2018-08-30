@@ -19,8 +19,9 @@ import notifications.urls
 from django.contrib import admin
 from django.urls import path, re_path, include
 from django.views.generic import TemplateView
-from django.views.static import serve
+from django.conf.urls.static import static
 
+from DaXueJi_Demo import settings
 from DaXueJi_Demo.settings import MEDIA_ROOT
 
 from users.models import UserProfile
@@ -46,8 +47,8 @@ router.register(r'users', UserViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # 处理图片显示的url，使用Django自带serve,传入参数告诉它去哪个路径找，我们有配置好的路径MEDIAROOT
-    re_path('media/(?P<path>.*)', serve, {'document_root': MEDIA_ROOT}),
+    # # 处理图片显示的url，使用Django自带serve,传入参数告诉它去哪个路径找，我们有配置好的路径MEDIAROOT
+    # re_path('media/(?P<path>.*)', serve, {'document_root': MEDIA_ROOT}),
     # index
     path('', TemplateView.as_view(template_name='index.html', extra_context={'current_page': ''}), name='index'),
     # users
@@ -67,4 +68,5 @@ urlpatterns = [
     # api-auth
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
-]
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
