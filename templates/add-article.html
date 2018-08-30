@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    写文章
+{% endblock %}
+
+{% block custom_css %}
+    <link rel="stylesheet" href="{% static 'css/fileinput.min.css' %}" type='text/css' media='all'>
+{% endblock %}
+
+{% block main_content %}
+<div class="container person">
+  <div class="row">
+     <div class="col-xs-12 col-sm-9 main">
+      <ul class="trigger-menu" data-pjax-container="#list-container">
+        <li class="active"><a href="#"><i class="fa fa-pencil"></i> 写文章</a></li>
+      </ul>
+      <div id="list-container">
+        <form class="form-horizontal" method="POST" enctype="multipart/form-data" action="{% url 'writing:add_article' %}">
+{#            <div class="form-group cover-picture">#}
+{#                <div class="col-md-12 cover-picture-previewWrapper">#}
+{#                    <div class="preview-cover hidden"><img alt="" class="preview-cover-image"></div>#}
+{#                    <div class="preview-cover-edit hidden">#}
+{#                        <button title="更换" aria-label="更换" type="button" class="btn cover-edit-btn pull-left">#}
+{#                           <i class="fa fa-camera" aria-hidden="true"></i>#}
+{#                            <input type="file" class="cover-picture-uploadInput cover-change" name="upload_file" accept=".jpeg, .jpg, .png">#}
+{#                        </button>#}
+{#                        <button title="删除" aria-label="删除" type="button" class="btn cover-edit-btn pull-right cover-delete">#}
+{#                            <i class="fa fa-trash-o" aria-hidden="true"></i>#}
+{#                        </button>#}
+{#                    </div>#}
+{#                    <div class="get-cover">#}
+{#                        <i class="fa fa-camera cover-picture-icon" aria-hidden="true"></i>#}
+{#                        <input id="cover-input" type="file" class="cover-picture-uploadInput" name="upload_file" accept=".jpeg, .jpg, .png">#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+            <div class="form-group">
+                <div class="col-md-12">
+                    {% csrf_token %}
+                    {{ article_form }}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="submit" id="submit" name="submit" class="btn btn-teal btn-block" value="保存">
+                </div>
+            </div>
+        </form>
+      </div>
+    </div>
+      <div class="col-xs-12 col-sm-3 aside">
+          <div class="recommend">
+              <div class="title"><span>Markdown语法：</span></div>
+              <div class="title"><span> #: 一级标题</span></div>
+              <div class="title"><span>##: 二级标题</span></div>
+              <div class="title"><span>> : 引用</span></div>
+              <div class="title"><span>[显示文本](链接地址): 链接</span></div>
+              <div class="title"><span>![显示文本](图片地址): 图片</span></div>
+              <div class="split-line"></div>
+              <a href="http://md.ityouknow.com/" target="_blank" class="btn btn-block btn-default"> 查看更多<i class="fa fa-angle-right m-lr-10"></i></a>
+      </div>
+      </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block custom_js %}
+{#    <style type="text/css">#}
+{#        .cover-picture{#}
+{#            background: #f7f8f9;#}
+{#            line-height: 190px;#}
+{#            color: gray;#}
+{#            min-height: 192px;#}
+{#            text-align: center;#}
+{#        }#}
+{#        .cover-picture-previewWrapper{#}
+{#            height: 100%;#}
+{#            -webkit-box-flex: 1;#}
+{#            flex: 1;#}
+{#            -webkit-box-pack: center;#}
+{#            justify-content: center;#}
+{#            position: relative;#}
+{#        }#}
+{#        .cover-picture-uploadInput{#}
+{#            position: absolute;#}
+{#            display: block;#}
+{#            top: 0;#}
+{#            left: 0;#}
+{#            height: 100%;#}
+{#            width: 100%;#}
+{#            opacity: 0;#}
+{#            text-decoration: none;#}
+{#            cursor: pointer;#}
+{#            z-index: 2;#}
+{#        }#}
+{#        .cover-picture-icon{#}
+{#            font-size: 32px;#}
+{#            color: rgba(0,0,0,.2);#}
+{#        }#}
+{#        .preview-cover-image{#}
+{#            height: 413px;#}
+{#            width: 100%;#}
+{#        }#}
+{#        .preview-cover-edit{#}
+{#            position: absolute;#}
+{#            -webkit-box-orient: horizontal;#}
+{#            -webkit-box-direction: normal;#}
+{#            flex-direction: row;#}
+{#            height: 42px;#}
+{#            right: 15px;#}
+{#            bottom: 0;#}
+{#            z-index: 1;#}
+{#            background: rgba(0,0,0,.75);#}
+{#            border-radius: 4px 0 0 0;#}
+{#            border: 0;#}
+{#        }#}
+{#        .cover-edit-btn{#}
+{#            margin-top: 15px;#}
+{#            background: transparent;#}
+{#            width: 48px;#}
+{#            border: 0;#}
+{#            border-radius: 0;#}
+{#            display: flex;#}
+{#            padding: 0;#}
+{#            -webkit-box-pack: center;#}
+{#            justify-content: center;#}
+{#            position: relative;#}
+{#            overflow: hidden;#}
+{#            color: #fff;#}
+{#        }#}
+{#    </style>#}
+
+    <script type="text/javascript">
+      {% ifequal edit_status 'ko' %}
+        tips('好气啊，提交失败啦！Ps: 目前不支持有emoji表情符号！', 'danger');
+      {% endifequal %}
+
+{#        // 提示添加封面图#}
+{#        $(".cover-picture").hover(function(){#}
+{#            $(".cover-picture-icon").text('添加封面图');#}
+{#        },function(){#}
+{#            $(".cover-picture-icon").text('');#}
+{#        });#}
+{#        // 预览封面图#}
+{#        $("#cover-input").change(function(){#}
+{#            $(".preview-cover-image").attr("src", URL.createObjectURL($(this)[0].files[0]));#}
+{#            $(".preview-cover").removeClass('hidden');#}
+{#            $(".preview-cover-edit").removeClass('hidden');#}
+{#            $(".get-cover").hide();#}
+{#            $(".cover-picture").css("background", 'white');#}
+{#         });#}
+{#        //#}
+{#        $(".cover-delete").click(function () {#}
+{#            $("#cover-input").val('');#}
+{#            $(".preview-cover-image").attr("src", '');#}
+{#            $(".preview-cover").addClass('hidden');#}
+{#            $(".preview-cover-edit").addClass('hidden');#}
+{#            $(".get-cover").show();#}
+{#            $(".cover-picture").css("background", '#f7f8f9');#}
+{#        });#}
+{#        $(".cover-change").change(function () {#}
+{#            $(".preview-cover-image").attr("src", URL.createObjectURL($(this)[0].files[0]));#}
+{#            $(".preview-cover").removeClass('hidden');#}
+{#            $(".preview-cover-edit").removeClass('hidden');#}
+{#            $(".get-cover").hide();#}
+{#            $(".cover-picture").css("background", 'white');#}
+{#        });#}
+
+    </script>
+{% endblock %}
+

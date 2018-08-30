@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load user_tags %}
+
+
+{% block title %}
+    专题详情
+{% endblock %}
+
+{% block main_content %}
+<div class="container collection index">
+  <div class="row">
+    <div class="col-xs-12 col-sm-9 main">
+      <!-- 专题头部模块 -->
+      <div class="main-top clearfix">
+        <a class="avatar-collection" href="{{ topic.get_absolute_url }}">
+          <img src="{{ MEDIA_URL }}{{ topic.avatar }}" alt="avatar" />
+        </a>
+        {% check_is_following_topic request topic as is_following %}
+        <a class="btn {% if is_following %}btn-round btn-default{% else %}btn-teal btn-circular{% endif %} pull-right m-t-23 m-l-10"
+           id="attenttocat_{{ topic.id }}"
+           data-login="{% if not request.user.is_authenticated %}un{% endif %}login"
+           data-action="{% if is_following %}un{% endif %}follow"
+           onclick="attentto_cat({{ topic.id }})">
+           {% if is_following %}
+               <i class="fa fa-check"></i><span> 已关注</span>
+           {% else %}
+               <i class="fa fa-plus"></i><span>关注</span>
+           {% endif %}
+        </a>
+        <div class="btn btn-teal btn-round btn-outline m-t-23 pull-right" data-toggle="modal" data-target="#recordModal"> 投稿 </div>
+        <div class="title"> <a class="name" href="{{ topic.get_absolute_url }}">{{ topic.name }}</a> </div>
+        <div class="info"> 收录了 {{ topic.articles.count }} 篇文章 · {{ topic.followers_topic.count }}人关注 </div>
+      </div>
+      <!-- 标签页-->
+      <ul class="trigger-menu nav nav-tabs" role="tablist" data-pjax-container="#list-container">
+        <li role="presentation" class="active">
+            <a href="#articlestab" aria-controls="articlestab" role="tab" data-toggle="tab">
+            <i class="fa fa-file-text"></i> 最新收录
+            </a>
+        </li>
+        <li role="presentation">
+            <a href="#commentstab" aria-controls="commentstab" role="tab" data-toggle="tab">
+                <i class="fa fa-comments"></i> 最新评论
+            </a>
+        </li>
+      </ul>
+     <!-- 标签面板-->
+      <div class="tab-content" id="list-container">
+        <div role="tabpanel" class="tab-pane fade in active" id="articlestab">
+        <!-- 专题部分文章列表 -->
+        <ul class="note-list" >
+          {% for article in articles %}
+          <li id="note-{{ article.id }}" data-note-id="{{ article.id }}" class="have-img">
+            {% if article.cover_picture %}
+            <a class="wrap-img" href="{{ article.get_absolute_url }}" target="_blank">
+                <img src="{{ MEDIA_URL }}{{ article.cover_picture }}">
+            </a>
+            {% endif %}
+            <div class="content">
+              <div class="author">
+                <a class="avatar" target="_blank" href="{{ article.author.get_absolute_url }}">
+                    <img src="{{ MEDIA_URL }}{{ article.author.avatar }}" alt="96">
+                </a>
+                <div class="name">
+                  <a class="blue-link" target="_blank" href="{{ article.author.get_absolute_url }}">
+                      {{ article.author.get_username_or_nickname }}
+                  </a>
+{#                  <span class="time" data-shared-at="{{ article.created }}">{{ article.created }}</span>#}
+                </div>
+              </div>
+              <a class="title" target="_blank"  href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+              <p class="abstract">{{ article.summary }}...</p>
+              <div class="meta">
+
+{#                <a target="_blank" href="{{ article.author.get_absolute_url }}">#}
+{#                    {{ article.author.get_username_or_nickname }}#}
+{#                </a>#}
+                <a target="_blank" href="{{ article.get_absolute_url }}"> <i class="fa fa-eye"></i> {{ article.view_count }} </a>
+                <a target="_blank" href="{{ article.get_absolute_url }}#comments"> <i class="fa fa-comment-o"></i> {{ article.comments.count }} </a>
+                <span><i class="fa fa-heart-o"></i> {{ article.total_like }}</span>
+              </div>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        <!--阅读更多-->
+        <a target="_blank" href="{{ topic.get_article_list }}" class="btn btn-block btn-default">阅读更多</a>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="commentstab">
+        <!-- 文章最新评论列表模块 -->
+        <ul class="note-list" >
+          {% for comment in comments %}
+          <li id="note-3" data-note-id="3">
+            <div class="content">
+              <div class="author">
+{#                <a class="avatar" href="{{ user_default.get_absolute_url }}"> <img src="{{ MEDIA_URL }}{{ user_default.avatar }}" alt="avatar"> </a>#}
+                 <cite>
+                <span> 来自 </span>
+                <div class="name">
+
+                      <a href="{{ comment.user.get_absolute_url }}">
+                        {{ comment.user.get_username_or_nickname }}
+                      </a>
+                </div>
+                </cite>
+              </div>
+                <p class="comment">{{ comment.content }}</p>
+              <blockquote>
+                <a class="title" href="{{ comment.article.get_absolute_url }}"> {{ comment.article.title }} </a>
+                <p class="abstract">{{ comment.article.summary }}...</p>
+                <div class="meta">
+                  <a target="_blank" href="{{ comment.article.author.get_absolute_url }}" class="text-teal">
+                      {{ comment.article.author.get_username_or_nickname }}
+                  </a>
+                  <a target="_blank" href="{{ comment.article.get_absolute_url }}"> <i class="fa fa-eye"></i> {{ comment.article.view_count }} </a>
+                  <a target="_blank" href="{{ comment.article.get_absolute_url }}#comments"> <i class="fa fa-comment-o"></i> {{ comment.article.comments.count }} </a>
+                  <span><i class=" fa fa-heart-o"></i> {{ comment.article.total_like }}</span>
+                </div>
+              </blockquote>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        <!--阅读更多-->
+        <a target="_blank" href="{{ topic.get_article_comment_list }}" class="btn btn-block btn-default">阅读更多</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-3 aside">
+      <p class="title">专题公告</p>
+      <div class="description js-description">
+        {{ topic.summary }}
+      </div>
+      <div class="share">
+        <span>分享至</span>
+        <a href="javascript:void((function(s,d,e,r,l,p,t,z,c){var%20f='http://v.t.sina.com.cn/share/share.php?appkey=1515056452',u=z||d.location,p=['&amp;url=',e(u),'&amp;title=',e(t||d.title),'&amp;source=',e(r),'&amp;sourceUrl=',e(l),'&amp;content=',c||'gb2312','&amp;pic=',e(p||'')].join('');function%20a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=440,height=430,left=',(s.width-440)/2,',top=',(s.height-430)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();})(screen,document,encodeURIComponent,'','','uploads/1.jpg', '《教育》（ 分享自笔下光年 ）','cat.html','页面编码gb2312|utf-8默认gb2312'));"><i class="fa fa-weibo" data-toggle="tooltip" data-original-title="分享到微博"></i></a>
+        <a data-action="weixin-share" class="share-weixin" data-toggle="tooltip" data-original-title="分享到微信"><i class="fa fa-wechat"></i></a>
+        <script type="text/javascript">document.write(['<a class="share-circle" data-toggle="tooltip" target="_blank" data-original-title="分享到qq空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=',encodeURIComponent(location.href),'&title=',encodeURIComponent(document.title),'" target="_blank" title="分享到QQ空间"> <i class="fa fa-qq"></i><\/a>'].join(''));</script>
+      </div>
+      <div>
+        <p class="title">管理员</p>
+        <div class="description">
+          <a href="{{ topic.admin.get_absolute_url }}" target="_blank" class="avatar">
+              <img src="{{ MEDIA_URL }}{{ topic.admin.avatar }}" data-toggle="tooltip" data-placement="right" title="" data-original-title="{{ topic.admin.get_username_or_nickname }}">
+         </a>
+       </div>
+        <div class="title">关注的人({{ topic.followers_topic.count }})</div>
+        <ul class="list collection-follower">
+          {% for follower in followers %}
+          <li>
+              <a href="{{ follower.get_absolute_url }}" target="_blank" class="avatar">
+                  <img src="{{ MEDIA_URL }}{{ follower.avatar }}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="{{ follower.get_username_or_nickname }}">
+              </a>
+          </li>
+          {% endfor %}
+          <a class="function-btn" href="{{ topic.get_follower_list }}"><i class="fa fa-ellipsis-h"></i></a>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block modal_dialog %}
+<div class="modal fade bs-example-modal-sm" id="share-wechat" tabindex="-1" role="wechat">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">打开微信“扫一扫”</h4>
+      </div>
+      <div class="modal-body qrcode" class="" title="article.html">
+        <div id="qr_wxcode"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 投稿 Modal -->
+<div class="modal fade" id="recordModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">可投稿文章，请选择:</h4>
+      </div>
+
+      <div class="modal-body">
+          <div class="recommend">
+              <ul class="list-group" id="record-modal-list">
+                {% include 'modal-article-ajax.html' %}
+              </ul>
+
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block custom_js %}
+<script src="{% static 'js/jquery.qrcode.min.js' %}" type="text/javascript"></script>
+<script>
+    //微信二维码生成
+    $('#qr_wxcode').qrcode("{{ topic.get_absolute_url }}");
+</script>
+
+<script type="text/javascript">
+<!--投稿模态框-->
+   $('#recordModal').on('show.bs.modal', function () {
+       {% if not request.user.is_authenticated %}
+            tips('请登录后再操作！', 'danger');
+            $('#recordModal').modal('hide');
+            return false;
+        {% endif %}
+        $.ajax({
+            cache: false,
+            type: "GET",
+            url: "{% url 'topics:can_record_article' %}",
+            data: {'tid': {{ topic.id }}},
+            async: true,
+            beforeSend:function(xhr, settings){
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function(data) {
+                if (data) {
+                    $('#record-modal-list').append(data);
+                }
+            },
+        });
+    });
+    // 关闭模态框时置空模态框内容
+    $('#recordModal').on('hidden.bs.modal', function () {
+        $('#record-modal-list').empty();
+    });
+
+    function touGaoArticle(aid) {
+        var action =  $("#taogaoart_"+aid).data('action');
+        $.ajax({
+            cache: false,
+            type: "POST",
+            data: {'aid': parseInt(aid), 'tid': {{ topic.id }}, 'action': action},
+            url: "{% url 'topics:record_article' %}",
+            async: true,
+            beforeSend:function(xhr, settings){
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function(data) {
+                if (data['msg'] == 'ok') {
+                    $("#taogaoart_"+aid).data('action', action == 'record' ? 'unrecord' : 'record');
+                    if ($("#taogaoart_"+aid).hasClass("btn-default")) {
+                        $("#taogaoart_"+aid).removeClass("btn-round btn-default");
+                        $("#taogaoart_"+aid).addClass("btn-teal btn-circular");
+
+                        $("#taogaoart_"+aid).html('<i class="fa fa-plus"></i><span>投稿</span>');
+                    } else {
+                        $("#taogaoart_"+aid).removeClass("btn-teal btn-circular");
+                        $("#taogaoart_"+aid).addClass("btn-round btn-default");
+
+                        $("#taogaoart_"+aid).html('<i class="fa fa-check"></i><span >已投稿</span>');
+                        tips('已发送投稿, 等待管理员确认。', 'success');
+                    }
+                }
+            },
+        });
+    }
+
+</script>
+
+{% endblock %}
+

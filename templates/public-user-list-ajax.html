@@ -1,0 +1,25 @@
+ {% load user_tags %}
+{% for user in users %}
+    {% check_is_following_user request user as is_following %}
+          <li>
+            <a href="{{ user.get_absolute_url }}" target="_blank" class="avatar">
+              <img src="{{ MEDIA_URL }}{{ user.avatar }}">
+            </a>
+            {% ifnotequal request.user user %}
+            <a class="btn {% if is_following %}btn-round btn-default{% else %}btn-teal btn-circular{% endif %} pull-right"
+               id="attenttouser_{{ user.id }}"
+               data-login="{% if not request.user.is_authenticated %}un{% endif %}login"
+               data-action="{% if is_following %}un{% endif %}follow"
+               onclick="attentto_user({{ user.id }})">
+                {% if is_following %}
+                    <i class="fa fa-check"></i> 已关注
+                {% else %}
+                    <i class="fa fa-plus"></i> 关注
+                {% endif %}
+            </a>
+            {% endifnotequal %}
+
+            <a href="{{ user.get_absolute_url }}" target="_blank" class="name"> {{ user.get_username_or_nickname }} </a>
+            <p> {{ user.signature }} </p>
+          </li>
+{% endfor %}

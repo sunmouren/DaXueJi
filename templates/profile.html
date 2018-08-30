@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}
+    个人信息修改
+{% endblock %}
+
+{% block main_content %}
+    <div class="container person">
+  <div class="row">
+    <div class="col-xs-12 col-sm-9 main">
+      <ul class="trigger-menu" data-pjax-container="#list-container">
+          <li class="active"><a href="#"><i class="fa fa-address-book-o"></i> 个人资料</a></li>
+      </ul>
+      <div id="list-container">
+        <form class="form-horizontal" method="POST" enctype="multipart/form-data" action="{{ user.get_profile }}">
+          <div class="form-group">
+              {% csrf_token %}
+              </div>
+              {% for field in user_profile_form %}
+                  <label class="col-md-2 site-label">{{ field.label_tag }}</label>
+                  <div class="col-md-10 p-mt-7"> {{ field }} </div>
+                  <div class="col-md-12">{{ field.errors }}</div>
+              {% endfor %}
+          </div>
+
+          <div class="form-group">
+            <div class="col-md-12">
+              <input type="submit" id="submit" name="submit" class="btn btn-teal btn-block" value="保存">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block custom_js %}
+      <script type="text/javascript">
+          {% ifequal edit_status 'ko' %}
+              tips('好气啊，提交失败啦！', 'danger');
+          {% endifequal %}
+
+{#          {% ifequal edit_status 'ok' %}#}
+{#             tips('修改成功', 'success');#}
+{#          {% endifequal %}#}
+      </script>
+{% endblock %}
+

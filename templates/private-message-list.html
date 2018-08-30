@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load private_message_tags %}
+
+{% block title %}
+    私信
+{% endblock %}
+
+{% block main_content %}
+    <div class="container index">
+    <div class="row">
+    <div class="col-xs-12 col-sm-9 aside">
+      <!-- 用户title部分导航 -->
+       <div class="main-top">
+          <h4>私信列表</h4>
+      </div>
+       <hr>
+       <div class="recommend">
+       <ul class="list">
+           {% for private_message in private_messages %}
+               {% get_leaf_node private_message as leaf %}
+               {% if private_message.user_from == request.user %}
+                   <li>
+                        <a href="{{ private_message.user_to.get_absolute_url }}" class="avatar">
+                        <img src="{{ MEDIA_URL }}{{ private_message.user_to.avatar }}">
+                        </a>
+                        <span class="pull-right"><small>{{ private_message.created }}</small></span>
+                        <a href="{% url 'private_messages:pm_chat' private_message.user_to.id %}" class="name">
+                            {{ private_message.user_to }}
+                        </a>
+                       <a href="{% url 'private_messages:pm_chat' private_message.user_to.id %}">
+                           <p> {{ leaf.content }} </p>
+                       </a>
+                    </li>
+               {% else %}
+                   <li>
+                        <a href="{{ private_message.user_from.get_absolute_url }}"  class="avatar">
+                        <img src="{{ MEDIA_URL }}{{ private_message.user_from.avatar }}">
+                        </a>
+                       <span class="pull-right"><small>{{ private_message.created }}</small></span>
+                        <a href="{% url 'private_messages:pm_chat' private_message.user_from.id %}" class="name">
+                            {{ private_message.user_from }}
+                        </a>
+                       <a href="{% url 'private_messages:pm_chat' private_message.user_from.id %}">
+                           <p> {{ leaf.content }} </p>
+                       </a>
+                    </li>
+               {% endif %}
+           {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% for article in articles %}
+            <li id="note-{{ article.id }}" data-note-id="{{ article.id }}" class="have-img">
+            {% if article.cover_picture %}
+             <a class="wrap-img" href="{{ article.get_absolute_url }}" target="_blank">
+              <img src="{{ MEDIA_URL }}{{ article.cover_picture }}">
+            </a>
+            {% endif %}
+            <div class="content">
+              <div class="author">
+                <a class="avatar" target="_blank" href="{{ article.author.get_absolute_url }}">
+                  <img src="{{ MEDIA_URL }}{{ article.author.avatar }}" alt="avatar" />
+                </a>
+                <div class="name">
+                  <a class="blue-link" target="_blank" href="{{ article.author.get_absolute_url }}">
+                      {{ article.author.get_username_or_nickname }}
+                  </a>
+                  <span class="time" data-shared-at="{{ article.created }}">{{ article.created }}</span>
+                </div>
+              </div>
+              <a class="title" target="_blank" href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+              <p class="abstract">{{ article.summary }}</p>
+              <div class="meta">
+                <a class="btn btn-outline btn-xs btn-danger" target="_blank" href="cat.html">生活</a>
+                <a target="_blank" href="{{ article.get_absolute_url }}"> <i class="fa fa-eye"></i> {{ article.view_count }} </a>
+                <a target="_blank" href="{{ article.get_absolute_url }}#comments"> <i class="fa fa-comment-o"></i> {{ article.comments.count }} </a>
+                <span><i class="fa fa-heart-o"></i> {{ article.total_like }}</span>
+              </div>
+            </div>
+          </li>
+  {% endfor %}

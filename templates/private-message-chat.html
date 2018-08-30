@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}
+    发私信
+{% endblock %}
+
+{% block main_content %}
+    <div class="container ">
+    <div class="row">
+    <div class="col-xs-12 col-sm-9">
+      <!-- 用户title部分导航 -->
+       <div class="chat-top">
+           <a href="{{ request.user.get_private_message_list }}" class="pull-left" style="margin-top: 16px">
+               <i class="fa fa-reply" aria-hidden="true"></i> 返回私信列表
+           </a>
+          <b>
+              与 {{ user_to }} 的聊天
+          </b>
+      </div>
+
+        <div class="message-show">
+            <div class="message-list">
+                {% for descendant in descendants %}
+            {% ifequal request.user descendant.user_from %}
+                <div class="media">
+                    <div class="media-body" >
+                        <p class="bg-info pull-right" style="margin-left: 50%; border-radius:8px; padding: 8px">
+                            {{ descendant.content }}
+                            <br>
+                            <cite class="pull-right">
+                                <span>
+                                    <small>{{ descendant.created }}</small>
+                                </span>
+                            </cite>
+                        </p>
+
+                    </div>
+                    <div class="media-right media-heading">
+                        <a href="{{ descendant.user_from.get_absolute_url }}" class="avatar">
+                            <img class="media-object" src="{{ MEDIA_URL }}{{ descendant.user_from.avatar }}" alt="avatar">
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="media">
+                    <div class="media-left media-heading">
+                        <a href="{{ descendant.user_from.get_absolute_url }}" class="avatar">
+                            <img class="media-object" src="{{ MEDIA_URL }}{{ descendant.user_from.avatar }}" alt="avatar">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <p class="bg-success pull-left" style="margin-right: 50%; border-radius:8px; padding: 8px">
+                            {{ descendant.content }}
+                            <br>
+                            <cite>
+                                <small>{{ descendant.created }}</small>
+                            </cite>
+                        </p>
+                    </div>
+                </div>
+            {% endifequal %}
+        {% endfor %}
+            </div>
+
+        </div>
+
+        <div class="message-write">
+            <form>
+                <textarea style="background-color: #f7f7f7" type="text" placeholder="输入内容" class="form-control" id="chat_text"></textarea>
+                <a class="btn btn-teal btn-circular pull-right" onclick="sentPM({{ user_to.id }})" style="margin-bottom: 3px">发送</a>
+            </form>
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block custom_js %}
+<style type="text/css">
+.chat-top {
+    position: fixed;
+    width: 693px;
+    z-index: 1;
+    min-height: 35px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    text-align: center;
+    background-color: #fff;
+    border-bottom: 1px solid #f0f0f0;
+}
+.chat-top b{
+    display: inline-block;
+    margin-top: 16px;
+    padding: 0 140px 0 160px;
+    font-size: 14px;
+}
+.message-show {
+	padding-top: 46px;
+
+}
+.message-show .message-list {
+	padding: 10px 0 110px;
+}
+
+.message-write {
+	position: fixed;
+    bottom: 0;
+    width: 693px;
+    margin-top: 15px;
+    background-color: #fff;
+}
+</style>
+<script type="text/javascript">
+    $(document).scrollTop($(document).height()-window.innerHeight);
+</script>
+<script type="text/javascript">
+    /*  发表评论 */
+    function sentPM(uid){
+
+        {% if not request.user.is_authenticated %}
+            tips('请登录后再操作！', 'danger');
+            return false;
+        {% endif %}
+
+        var chat_text = $.trim($('#chat_text').val());
+
+        if (chat_text == '') {
+            tips('评论不能为空！', 'danger');
+            return false;
+        }
+        $.ajax({
+            cache: false,
+            type : "POST",
+            data : {'uid':parseInt(uid), 'content': chat_text},
+            url : "/message/add/",
+            async: true,
+            beforeSend : function (xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            //成功返回之后调用的函数
+            success:function(data){
+                if (data['msg'] == 'ok') {
+                    $("#chat_text").val("");
+                    location.reload();
+                    return true;
+                } else {
+                    tips('内容出错啦！Ps: 目前不支持有emoji表情符号！对方或已删除评论！', 'danger');
+                    return false;
+                }
+            },
+            complete: function () {
+               pageLoader('hide');
+            },
+
+            //调用出错执行的函数
+            error: function(){
+                tips('好气啊 提交失败啦 Ps: 目前不支持有emoji表情符号！对方或已删除评论！', 'danger');
+                return false;
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,39 @@
+        <li id="note-3" data-note-id="3">
+            <div class="content">
+              <div class="author">
+                 <cite>
+                <span>来自</span>
+                <div class="name">
+                      <a href="{{notice.actor.get_absolute_url }}">
+                        {{ notice.actor }}
+                      </a>
+                      <span>{{ notice.timesince }}前</span>
+                      {% if notice.target %}
+                          <span>在<a href="{{ notice.target.get_absolute_url }}#comment-{{ notice.action_object.id }}">《{{ notice.target }}》</a>中</span>
+                      {% endif %}
+                        <span>{{ notice.verb }}</span>
+                </div>
+                </cite>
+              </div>
+                <p class="comment">{{ notice.description}}</p>
+                <button type="button" class="btn btn-default btn-xs"
+                        data-toggle="modal" data-target="#replyModal"
+                        data-aid="{{ notice.target.id }}" data-pid="{{ notice.action_object.id }}"
+                        data-recipient="@{{ notice.actor }}">回复</button>
+                <a class="btn btn-danger btn-xs pull-right" href="{% url 'notifications:delete' notice.slug %}" style="margin-left: 16px">
+                    <i class="fa fa-times"></i> 删除通知
+                </a>
+                {% if notice.unread %}
+                    <a class="btn btn-info btn-xs pull-right" href="{% url 'notifications:mark_as_read' notice.slug %}">标记为已读</a>
+                {% endif %}
+
+                {% ifequal notice.verb '回复了你'  %}
+                    <div style="margin-top: 8px">
+                        <blockquote>
+                            <p class="abstract">{{ notice.action_object.parent.content }}</p>
+                        </blockquote>
+                    </div>
+                {% endifequal %}
+            </div>
+
+          </li>

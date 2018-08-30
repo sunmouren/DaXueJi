@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ main_top_info }}
+{% endblock %}
+
+{% block main_content %}
+    <div class="container index">
+  <div class="row">
+    <div class="col-xs-12 main">
+      <!-- 用户title部分导航 -->
+       <div class="main-top">
+          <h4>{{ main_top_info }}({{ comment_count }})</h4>
+      </div>
+       <hr>
+      <div id="list-container">
+        <!-- 文章列表模块 -->
+        <ul class="note-list public-comment-list">
+        {% include 'public-comment-list-ajax.html' %}
+        </ul>
+        <!-- 文章列表模块 -->
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block custom_js %}
+    <script type="text/javascript">
+    $.ajaxSetup({
+        data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
+    $(document).ready(function () {
+        var page = 1;
+        var empty_page = false;
+        var block_request = false;
+
+        $(window).scroll(function() {
+        var margin = $(document).height() - $(window).height() - 200;
+            if  ($(window).scrollTop() > margin && empty_page == false && block_request == false) {
+                {% if comment_count < 10 %}
+                    return false;
+                {% endif %}
+                block_request = true;
+                page += 1;
+                $.get('?page=' + page, function(data) {
+                    if(data == '')
+                    {
+                        empty_page = true;
+                    }
+                    else {
+                        block_request = false;
+                        $('.public-comment-list').append(data);
+                    }
+                });
+            }
+        });
+    });
+
+</script>
+{% endblock %}

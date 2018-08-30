@@ -1,0 +1,46 @@
+{% load i18n %}
+
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?{{ page_obj.previous_page_number.querystring }}" class="prev">&lsaquo;&lsaquo; {% trans "previous" %}</a>
+    {% else %}
+        <span class="disabled prev">&lsaquo;&lsaquo; {% trans "previous" %}</span>
+    {% endif %}
+    {% for page in page_obj.pages %}
+        {% if page %}
+            {% ifequal page page_obj.number %}
+                <span class="current page">{{ page }}</span>
+            {% else %}
+                <a href="?{{ page.querystring }}" class="page">{{ page }}</a>
+            {% endifequal %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+        <a href="?{{ page_obj.next_page_number.querystring }}" class="next">{% trans "next" %} &rsaquo;&rsaquo;</a>
+    {% else %}
+        <span class="disabled next">{% trans "next" %} &rsaquo;&rsaquo;</span>
+    {% endif %}
+</div>
+
+  <!--评论分页-->
+{#           <div class="text-center m-t-30">#}
+{#               <ul class="pagination">#}
+{#                      <li>#}
+{#                        <a href="#" class="previous">#}
+{#                          <i class="fa fa-angle-left"></i>#}
+{#                        </a>#}
+{#                      </li>#}
+{#                      <li><a href="#">1</a></li>#}
+{#                      <li><a href="#">2</a></li>#}
+{#                      <li class="active"><a href="#">3</a></li>#}
+{#                      <li><a href="#">4</a></li>#}
+{#                      <li><a href="#">5</a></li>#}
+{#                      <li>#}
+{#                        <a href="#" class="next">#}
+{#                          <i class="fa fa-angle-right"></i>#}
+{#                        </a>#}
+{#                      </li>#}
+{#                    </ul>#}
+{#          </div>#}

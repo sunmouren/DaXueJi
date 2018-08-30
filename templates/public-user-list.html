@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}
+    粉丝列表
+{% endblock %}
+
+{% block main_content %}
+    <div class="container index">
+    <div class="row">
+    <div class="col-xs-12 col-sm-9 aside">
+      <!-- 用户title部分导航 -->
+       <div class="main-top">
+          <h4>{{ main_top_info }}({{ user_count }})</h4>
+      </div>
+       <hr>
+       <div class="recommend">
+        <ul class="list">
+          {% include 'public-user-list-ajax.html' %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block custom_js %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var page = 1;
+        var empty_page = false;
+        var block_request = false;
+
+        $(window).scroll(function() {
+        var margin = $(document).height() - $(window).height() - 200;
+            if  ($(window).scrollTop() > margin && empty_page == false && block_request == false) {
+                {% if user_count < 10 %}
+                    return false;
+                {% endif %}
+                block_request = true;
+                page += 1;
+                $.get('?page=' + page, function(data) {
+                    if(data == '')
+                    {
+                        empty_page = true;
+                    }
+                    else {
+                        block_request = false;
+                        $('.user-list').append(data);
+                    }
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

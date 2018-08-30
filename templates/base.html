@@ -1,0 +1,133 @@
+{% load staticfiles %}
+{% load notifications_tags %}
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>
+    {% block title %}{% endblock %} - Python技术杂货铺
+</title>
+<meta name="author" content="sunmouren" />
+<meta name="description" content="Python技术杂货铺" />
+<meta name="keywords" content="python, django, 大学生活，写作，技术分享" />
+<link rel="icon" href="{% static 'images/favicon.ico' %}">
+<link  href="{% static 'css/animate.min.css' %}" rel='stylesheet'/>
+<link href="{% static 'css/bootstrap.min.css' %}" rel='stylesheet'/>
+<link href="{% static 'css/font-awesome.min.css' %}" rel='stylesheet'>
+<link href="{% static 'css/style.css' %}" rel='stylesheet'/>
+{% block custom_css %}{% endblock %}
+</head>
+  
+<body>
+<nav class="navbar navbar-default navbar-fixed-top site-navbar" role="navigation">
+  <div class="site-top-width"> 
+    <a class="logo pull-left bounceIn animated" href="{% url 'index' %}"><img src="{% static 'images/logo.jpg' %}" alt="Logo" class="img-responsive" /></a>
+    <a class="btn btn-teal pull-right" target="_blank" href="{% url 'writing:add_article' %}" id="addarticle">
+      <i class="fa fa-pencil"></i>写文章
+    </a>
+      {% if request.user.is_authenticated %}
+        <div class="user pull-right">
+        <div data-hover="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+        <a class="avatar" href="#"><img src="{{ MEDIA_URL }}{{ request.user.avatar }}" alt="120" /></a>
+        </div>
+        <ul class="dropdown-menu">
+            <li> <a href="{{ request.user.get_absolute_url }}"> <i class="fa fa-user-o"></i><span>我的主页</span> </a> </li>
+            <li> <a href="{{ request.user.get_article_list }}"> <i class="fa fa-file-o"></i><span>我的文章</span> </a> </li>
+            <li> <a href="{{ request.user.get_following_user_list }}"> <i class="fa fa-heart-o"></i><span>我的关注</span> </a> </li>
+{#            <li> <a href="#"> <i class="fa fa-star-o"></i><span>我的收藏</span> </a> </li>#}
+            <li> <a href="{{ request.user.get_private_message_list }}"> <i class="fa fa-envelope-o"></i><span>我的私信</span> </a> </li>
+            <li> <a href="{% url 'users:logout' %}"> <i class="fa fa-sign-out"></i><span>退出登录</span> </a> </li>
+        </ul>
+        </div>
+      {% else %}
+           <a class="btn btn-teal btn-outline pull-right" target="_blank" href="{% url 'users:register' %}">注册</a>
+           <a class="btn btn-default pull-right" target="_blank" href="{% url 'users:login' %}">登录</a>
+      {% endif %}
+
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu" aria-expanded="false">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="menu">
+        <ul class="nav navbar-nav">
+          <li class="{% ifequal current_page '' %}active{% endifequal %}">
+            <a href="{% url 'index' %}"> <span class="menu-text">首页</span><i class="fa fa-home menu-icon"></i> </a>
+          </li>
+          <li class="{% ifequal current_page 'recommend_authors' %}active{% endifequal %}">
+            <a class="app-download-btn" href="{% url 'users:recommend_authors' %}"><span class="menu-text">作者</span><i class="fa fa-user-circle-o menu-icon"></i></a>
+          </li>
+          <li class="{% ifequal current_page 'hot_topics' %}active{% endifequal %}">
+            <a class="app-download-btn" href="{% url 'topics:hot_topics' %}"><span class="menu-text">专题</span><i class="fa fa-lemon-o menu-icon"></i></a>
+          </li>
+          <li>
+            <a class="app-download-btn" href="#"><span class="menu-text">公告</span><i class="fa fa-bullhorn menu-icon"></i></a>
+          </li>
+          <li class="search">
+            <form target="_blank" name="searchform" action="#"  method="get" accept-charset="UTF-8" >
+              <input type="text" tabindex="1" name="word" id="search-kw" value="" placeholder="开发中..." class="search-input" />
+              <button type="submit" class="search-btn" onclick="return false"> <i class="fa fa-search"></i> </button>
+            </form>
+          </li>
+          {% if request.user.is_authenticated %}
+              <li>
+                {% notifications_unread as unread_count %}
+                    <a href="{% url 'notifications:unread' %}" class="app-download-btn">
+                        <i class="fa fa-bell-o" aria-hidden="true"></i>
+                        {% if unread_count > 0 %}<span class="btn-danger badge ">{{ unread_count }}</span>{% endif %}
+                    </a>
+              </li>
+          {% endif %}
+
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!--主体内容-->
+{% block main_content %}
+
+{% endblock %}
+
+{#<div class="web-footer">#}
+{#  <div class="container">#}
+{#    <div class="row">#}
+{#      <p class="copyright text-center">#}
+{#        Powered by<a target="_blank" href="http://www.itshubao.com">IT书包</a>#}
+{#        <a target="_blank" href="#">关于我们</a>#}
+{#        <a target="_blank" href="#">合作伙伴</a>#}
+{#        <a target="_blank" href="#">帮助中心</a>#}
+{#        <span class="icp">京ICP备16013026号-1</span>#}
+{#      </p>#}
+{#    </div>#}
+{#  </div>#}
+{#</div>#}
+
+{% block modal_dialog %}
+
+{% endblock %}
+
+
+<script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/bootstrap.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/jquery.lazyload.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/bootstrap-notify.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/app.js' %}" type="text/javascript"></script>
+<script type="text/javascript">
+    $.ajaxSetup({
+        data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
+</script>
+
+{% block custom_js %}
+
+{% endblock %}
+</body>
+</html>

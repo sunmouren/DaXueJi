@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load user_tags %}
+
+{% block title %}
+    热门专题
+{% endblock %}
+
+{% block main_content %}
+<div class="container recommend-box">
+  <img class="img-responsive" src="{% static 'images/topic.png' %}" alt="Recommend author" />
+  <div class="row">
+    {% for hot_topic in hot_topics %}
+    {% check_is_following_topic request hot_topic as is_following %}
+    <div class="col-sm-6 col-lg-4">
+      <div class="wrap">
+        <a class="avatar-collection" target="_blank" href="{{ hot_topic.get_absolute_url }}">
+            <img src="{{ MEDIA_URL }}{{ hot_topic.avatar }}" alt="avatar"> </a>
+        <h4> <a target="_blank" href="{{ hot_topic.get_absolute_url }}">{{ hot_topic.name }}</a> </h4>
+        <p class="description">{{ hot_topic.summary }}</p>
+        <a class="btn {% if is_following %}btn-round btn-default{% else %}btn-teal btn-circular{% endif %}"
+           id="attenttocat_{{ hot_topic.id }}"
+           data-login="{% if not request.user.is_authenticated %}un{% endif %}login"
+           data-action="{% if is_following %}un{% endif %}follow"
+           onclick="attentto_cat({{ hot_topic.id }})">
+           {% if is_following %}
+               <i class="fa fa-check"></i><span> 已关注</span>
+           {% else %}
+               <i class="fa fa-plus"></i><span>关注</span>
+           {% endif %}
+        </a>
+        <hr>
+        <div class="recent-update">
+          <div class="news"><span>18篇文章</span> · <span>125人关注</span></div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+  <div class="text-center m-t-50">
+    <ul class="pagination">
+      <li>
+        <a href="#" class="previous">
+          <i class="fa fa-angle-left"></i>
+        </a>
+      </li>
+      <li><a href="#">1</a></li>
+      <li><a href="#">2</a></li>
+      <li class="active"><a href="#">3</a></li>
+      <li><a href="#">4</a></li>
+      <li><a href="#">5</a></li>
+      <li>
+        <a href="#" class="next">
+          <i class="fa fa-angle-right"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+{% endblock %}

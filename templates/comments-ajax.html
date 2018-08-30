@@ -1,0 +1,67 @@
+{% load user_tags %}
+{% load comment_tags %}
+                {% for comment in recent_comments %}
+                  <div id="comment-{{ comment.id }}" class="comment">
+                    <div>
+                      <div class="author">
+                        <a href="{{ comment.user.get_absolute_url }}"
+                            target="_blank" class="avatar">
+                            <img src="{{ MEDIA_URL }}{{ comment.user.avatar }}">
+                        </a>
+                        <div class="info">
+                          <a href="{{ comment.user.get_absolute_url }}" target="_blank" class="name">
+                              {{ comment.user.get_username_or_nickname }}
+                          </a>
+                          <div class="meta"> <span>{{ comment.created }}</span> </div>
+                        </div>
+                      </div>
+                      <div class="comment-wrap">
+                          <p> {{ comment.content }} </p>
+                          <div>
+                                {% with comment_user_like=comment.user_like.all comment_id=comment.id total_like=comment.total_like  %}
+                                {% check_is_liked_comment request comment_user_like as is_liked %}
+                                    <a class="btn {% if is_liked %}btn-danger{% else %}btn-default{% endif %} btn-xs" id="likecomment_{{ comment.id }}"
+                                       data-login="{% if not request.user.is_authenticated %}un{% endif %}login"
+                                        data-action="{% if is_liked %}un{% endif %}like"
+                                        onclick="like_comment({{ comment_id }})">
+                                        <i class="fa fa-thumbs-o-up"></i>
+                                        <span id="likectcount_{{ comment_id }}">{{ total_like }}</span>
+                                    </a>
+                                {% endwith %}
+                                <a class="btn btn-default btn-xs" style="margin-left: 16px"
+                                   id="replyatag_{{ comment.id }}"
+                                   data-login="{% if not request.user.is_authenticated %}un{% endif %}login"
+                                   onclick="addCommentReplyForm({{ comment.id }})">
+                                    <i class="fa fa-comment-o"></i> 回复
+                                </a>
+                                 <!-- 如果是当前评论者 加入删除按钮 -->
+                                {% ifequal request.user comment.user %}
+                                <a class="btn btn-default btn-xs" style="margin-left: 16px" onclick="deleteComment({{ comment.id }})"
+                                    data-toggle="tooltip" data-placement="top" data-original-title="确定删除?">
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i> 删除
+                                </a>
+                                {% endifequal %}
+                          </div>
+
+                          <div class="replyform_{{ comment.id }}" style="margin-top: 8px; margin-bottom: 60px; display: none">
+                            {% include 'reply-from.html'%}
+                          </div>
+
+                         {% if comment.parent %}
+                             <div class="comment-wrap" style="margin-top: 8px">
+                                <blockquote>
+                                <a href="{{ comment.parent.user.get_absolute_url }}" class="name">
+                                    @{{ comment.parent.user.get_username_or_nickname }}:
+                                </a>
+                                <p>{{ comment.parent.content }}</p>
+                                </blockquote>
+                             </div>
+
+                         {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+
+
+

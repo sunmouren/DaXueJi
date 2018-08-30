@@ -1,0 +1,13 @@
+{% for can_record_article in can_record_articles %}
+    <li class="list-group-item" >
+        <a href="">{{ can_record_article.title }}</a>
+        <a class="btn btn-teal btn-circular btn-xs pull-right "
+           id="taogaoart_{{ can_record_article.id }}"
+            data-action="record"
+            onclick="touGaoArticle({{ can_record_article.id }})">
+            <i class="fa fa-plus"></i><span>投稿</span>
+        </a>
+    </li>
+{% endfor %}
+
+

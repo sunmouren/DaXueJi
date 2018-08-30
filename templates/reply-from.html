@@ -1,0 +1,7 @@
+<form class="new-reply">
+    <textarea style="background-color: #f7f7f7" placeholder="写下你的评论..." class="form-control"
+              data-login="{% if not request.user.is_authenticated %}un{% endif %}login"
+              id="commentarea_{{ comment.id }}" rows="3"></textarea>
+    <a class="btn btn-default pull-left " id="replies" onclick="cancleReply({{ comment.id }})">取消</a>
+    <a class="btn btn-teal pull-right " id="replies" onclick="submitComment({{ article.id }}, {{ comment.id }})">提交</a>
+</form>

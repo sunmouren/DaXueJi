@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    编辑文章
+{% endblock %}
+
+{% block main_content %}
+<div class="container person">
+  <div class="row">
+    <div class="col-xs-12 col-sm-9 main">
+      <ul class="trigger-menu" data-pjax-container="#list-container">
+        <li class="active"><a href="#"><i class="fa fa-pencil"></i> 编辑文章</a></li>
+      </ul>
+      <div id="list-container">
+        <form class="form-horizontal" method="POST" enctype="multipart/form-data" action="{% url 'writing:edit_article' article.id %}">
+          <div class="form-group">
+            <div class="col-md-12">
+                {% csrf_token %}
+                {{ article_form.as_p }}
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-12">
+              <input type="submit" id="submit" name="submit" class="btn btn-teal btn-block" value="保存">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+      <div class="col-xs-12 col-sm-3 aside">
+          <div class="recommend">
+              <div class="title"><span>Markdown语法：</span></div>
+              <div class="title"><span> #: 一级标题</span></div>
+              <div class="title"><span>##: 二级标题</span></div>
+              <div class="title"><span>> : 引用</span></div>
+              <div class="title"><span>[显示文本](链接地址): 链接</span></div>
+              <div class="title"><span>![显示文本](图片地址): 图片</span></div>
+              <div class="split-line"></div>
+              <a href="http://md.ityouknow.com/" target="_blank" class="btn btn-block btn-default"> 查看更多<i class="fa fa-angle-right m-lr-10"></i></a>
+      </div>
+      </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block custom_js %}
+      <script type="text/javascript">
+          {% ifequal edit_status 'ko' %}
+              tips('好气啊，提交失败啦！', 'danger');
+          {% endifequal %}
+      </script>
+{% endblock %}
+

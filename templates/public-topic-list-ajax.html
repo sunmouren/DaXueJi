@@ -1,0 +1,22 @@
+{% load user_tags %}
+{% for topic in topics %}
+    {% check_is_following_topic request topic as is_following %}
+          <li>
+            <a href="{{ topic.get_absolute_url }}" target="_blank" class="avatar">
+              <img src="{{ MEDIA_URL }}{{ topic.avatar }}">
+            </a>
+            <a class="btn {% if is_following %}btn-round btn-default{% else %}btn-teal btn-circular{% endif %} pull-right"
+               id="attenttocat_{{ topic.id }}"
+               data-login="{% if not request.user.is_authenticated %}un{% endif %}login"
+               data-action="{% if is_following %}un{% endif %}follow"
+               onclick="attentto_cat({{ topic.id }})">
+                {% if is_following %}
+                    <i class="fa fa-check"></i> 已关注
+                {% else %}
+                    <i class="fa fa-plus"></i> 关注
+                {% endif %}
+            </a>
+            <a href="{{ topic.get_absolute_url }}" target="_blank" class="name"> {{ topic.name }} </a>
+            <p> 收录了 {{ topic.articles.count }} 篇文章 · {{ topic.followers_topic.count }}人关注 </p>
+          </li>
+{% endfor %}

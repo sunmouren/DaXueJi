@@ -1,0 +1,32 @@
+{% for comment in comments %}
+          <li id="note-3" data-note-id="3">
+            <div class="content">
+              <div class="author">
+{#                <a class="avatar" href="{{ user_default.get_absolute_url }}"> <img src="{{ MEDIA_URL }}{{ user_default.avatar }}" alt="avatar"> </a>#}
+                 <cite>
+                <span> 来自 </span>
+                <div class="name">
+
+                      <a href="{{ comment.user.get_absolute_url }}">
+                        {{ comment.user }}
+                      </a>
+                      <span>{{ comment.created }}</span>
+                </div>
+                </cite>
+              </div>
+                <p class="comment">{{ comment.content }}</p>
+              <blockquote>
+                <a class="title" href="{{ comment.article.get_absolute_url }}"> {{ comment.article.title }} </a>
+                <p class="abstract">{{ comment.article.summary }}...</p>
+                <div class="meta">
+                  <a target="_blank" href="{{ comment.article.author.get_absolute_url }}" class="text-teal">
+                      {{ comment.article.author }}
+                  </a>
+                  <a target="_blank" href="{{ comment.article.get_absolute_url }}"> <i class="fa fa-eye"></i> {{ comment.article.view_count }} </a>
+                  <a target="_blank" href="{{ comment.article.get_absolute_url }}#comments"> <i class="fa fa-comment-o"></i> {{ comment.article.comments.count }} </a>
+                  <span><i class=" fa fa-heart-o"></i> {{ comment.article.total_like }}</span>
+                </div>
+              </blockquote>
+            </div>
+          </li>
+{% endfor %}

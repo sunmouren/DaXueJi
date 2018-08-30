@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load article_tags %}
+{% load topic_tags %}
+{% load user_tags %}
+
+{% block title %}
+    网站首页
+{% endblock %}
+
+
+{% block main_content %}
+<div class="container index">
+    <div class="row">
+    <!--主体内容-->
+    <div class="col-xs-12 col-sm-9 main">
+      <div class="recommend-collection">
+        {% get_hot_topics 8 as hot_topics %}
+        {% for hot_topic in hot_topics %}
+        <a class="collection" target="_blank" href="{{ hot_topic.get_absolute_url }}">
+          <img src="{{ MEDIA_URL }}{{ hot_topic.avatar }}" alt="avatar" style="height:32px;width:32px;">
+          <div class="name">{{ hot_topic.name }}</div>
+        </a>
+        {% endfor %}
+        <a class="more-hot-collection" target="_blank" href="{% url 'topics:hot_topics' %}"> 更多热门专题 <i class="fa fa-angle-right mar-ly-1"></i> </a>
+      </div>
+      <div class="split-line"></div>
+      <div id="list-container">
+        <!-- 文章列表模块 -->
+        <ul class="note-list">
+            {% get_recent_article as recent_articles %}
+            {% for recent_article in recent_articles %}
+            <li id="note-{{ recent_article.id }}" data-note-id="{{ recent_article.id }}" class="have-img">
+            {% if recent_article.cover_picture %}
+            <a class="wrap-img" href="{{ recent_article.get_absolute_url }}" target="_blank">
+              <img src="{{ MEDIA_URL }}{{ recent_article.cover_picture }}">
+            </a>
+            {% endif %}
+            <div class="content">
+              <div class="author">
+                <a class="avatar" target="_blank" href="{{ recent_article.author.get_absolute_url }}">
+                  <img src="{{ MEDIA_URL }}{{ recent_article.author.avatar }}" alt="avatar" />
+                </a>
+                <div class="name">
+                  <a class="blue-link" target="_blank" href="{{ recent_article.author.get_absolute_url }}">
+                      {{ recent_article.author.get_username_or_nickname }}
+                  </a>
+                  <span class="time" data-shared-at="{{ recent_article.created }}">{{ recent_article.created }}</span>
+                </div>
+              </div>
+              <a class="title" target="_blank" href="{{ recent_article.get_absolute_url }}">{{ recent_article.title }}</a>
+              <p class="abstract">{{ recent_article.summary }}</p>
+              <div class="meta">
+                <a class="btn btn-outline btn-xs btn-danger" target="_blank" href="cat.html">生活</a>
+                <a target="_blank" href="{{ recent_article.get_absolute_url }}"> <i class="fa fa-eye"></i> {{ recent_article.view_count }} </a>
+                <a target="_blank" href="{{ recent_article.get_absolute_url }}#comments"> <i class="fa fa-comment-o"></i> {{ recent_article.comments.count }} </a>
+                <span><i class="fa fa-heart-o"></i> {{ recent_article.total_like }}</span>
+              </div>
+            </div>
+          </li>
+            {% endfor %}
+        </ul>
+        <!-- 文章列表模块 -->
+      </div>
+      <a href="{% url 'writing:article_list' %}" class="btn btn-block btn-default">阅读更多</a>
+    </div>
+
+    <!--右边栏目-->
+     <div class="col-xs-12 col-sm-3 aside">
+      <div class="recommend">
+        <div class="title"><span>推荐作者</span></div>
+        <ul class="list">
+          {% get_recommend_authors request as recommend_authors %}
+          {% for recommend_author in recommend_authors %}
+          {% check_is_following_user request recommend_author as is_following %}
+          <li>
+            <a href="{{ recommend_author.get_absolute_url }}" target="_blank" class="avatar">
+              <img src="{{ MEDIA_URL }}{{ recommend_author.avatar }}">
+            </a>
+            <a class="pull-right {% if is_following %}following{% else %}follow{% endif %}" id="attenttouser_{{ recommend_author.id }}"
+                data-login="{% if not request.user.is_authenticated %}un{% endif %}login"
+                data-action="{% if is_following %}un{% endif %}follow"
+                onclick="attentto_user_index({{ recommend_author.id }})">
+                {% if is_following %}
+                    <i class="fa fa-check"></i> 已关注
+                {% else %}
+                    <i class="fa fa-plus"></i> 关注
+                {% endif %}
+            </a>
+            <a href="{{ recommend_author.get_absolute_url }}" target="_blank" class="name"> {{ recommend_author }} </a>
+            <p> {{ recommend_author.followers_user.count }}关注 · 写了289.7K字 </p>
+          </li>
+          {% endfor %}
+
+          <li>
+            <a href="#" target="_blank" class="avatar">
+              <img src="/static/uploads/avatar1.jpg">
+            </a>
+            <a class="pull-right following" id="attenttouser_2" onclick="attentto_user_index(2)"><i class="fa fa-check"></i> 已关注 </a>
+            <a href="#" target="_blank" class="name"> 流星 </a>
+            <p> 9.8K关注 · 写了9.7K字 </p>
+          </li>
+          <li>
+            <a href="#" target="_blank" class="avatar">
+              <img src="/static/uploads/avatar2.jpg">
+            </a>
+            <a class="pull-right follow" id="attenttouser_3" onclick="attentto_user_index(3)"><i class="fa fa-plus"></i> 关注 </a>
+            <a href="#" target="_blank" class="name"> 菊花·古剑·酒 </a>
+            <p> 66关注 · 写了17.9K字 </p>
+          </li>
+          <li>
+            <a href="#" target="_blank" class="avatar">
+              <img src="/static/uploads/avatar3.jpg">
+            </a>
+            <a class="pull-right follow" id="attenttouser_4" onclick="attentto_user_index(4)"><i class="fa fa-plus"></i> 关注 </a>
+            <a href="#" target="_blank" class="name"> 流逝的云 </a>
+            <p> 9.8K关注 · 写了805.2K字 </p>
+          </li>
+          <li>
+            <a href="#" target="_blank" class="avatar">
+              <img src="/static/uploads/avatar4.jpg">
+            </a>
+            <a class="pull-right follow" id="attenttouser_5" onclick="attentto_user_index(5)"><i class="fa fa-plus"></i> 关注 </a>
+            <a href="#" target="_blank" class="name"> 茜张花木 </a>
+            <p> 2.2K关注 · 写了14.4K字 </p>
+          </li>
+          <li>
+            <a href="#" target="_blank" class="avatar">
+              <img src="/static/uploads/avatar5.jpg">
+            </a>
+            <a class="pull-right follow" id="attenttouser_6" onclick="attentto_user_index(6)"><i class="fa fa-plus"></i> 关注 </a>
+            <a href="#" target="_blank" class="name"> 月色池塘 </a>
+            <p> 401关注 · 写了124.5K字 </p>
+          </li>
+          <li>
+            <a href="#" target="_blank" class="avatar">
+              <img src="/static/uploads/avatar6.jpg">
+            </a>
+            <a class="pull-right follow" id="attenttouser_7" onclick="attentto_user_index(7)"><i class="fa fa-plus"></i> 关注 </a>
+            <a href="#" target="_blank" class="name"> 切吧 </a>
+            <p> 5.2K关注 · 写了306.3K字 </p>
+          </li>
+        </ul>
+        <a href="{% url 'users:recommend_authors' %}" target="_blank" class="btn btn-block btn-default"> 查看全部<i class="fa fa-angle-right m-lr-10"></i></a>
+      </div>
+      <div class="split-line"></div>
+{#      <div class="recommend">#}
+{#        <div class="title"><span>推荐文章</span></div>#}
+{#        <ul class="list">#}
+{#          <li>#}
+{#            <a class="li-a-title" target="_blank" href="#" title="第44回 金毛犼爱财设巧计 山西雁贪功坠牢笼">第44回 金毛犼爱财设巧计 山西雁贪功坠牢笼</a>#}
+{#          </li>#}
+{#        </ul>#}
+{#        <a href="{% url 'writing:article_list' %}" target="_blank" class="btn btn-block btn-default"> 查看全部<i class="fa fa-angle-right m-lr-10"></i> </a>#}
+{#      </div>#}
+    </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+  

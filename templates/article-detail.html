@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load user_tags %}
+{% load comment_tags %}
+{% load article_tags %}
+
+{% block title %}
+    文章详情
+{% endblock %}
+
+{% block custom_css %}
+    <link rel="stylesheet" href="{% static 'css/github.css' %}">
+{% endblock %}
+
+{% block main_content %}
+<div class="container index">
+  <div class="row">
+    <div class="col-xs-12 main">
+      <div class="note">
+        <div class="post">
+          <div class="article">
+            <h1 class="title">{{ article.title }}</h1>
+
+            <!-- 作者 -->
+            <div class="author">
+              <a class="avatar" href="{{ article.author.get_absolute_url }}"> <img src="{{ MEDIA_URL }}{{ article.author.avatar }}" alt="avatar"> </a>
+              <div class="info">
+                <span class="btn btn-outline btn-xs btn-danger">作者</span>
+                <span class="name">
+                    {% check_is_following_user request article.author as is_following %}
+                    <a href="{{ article.author.get_absolute_url }}">
+                        {{ article.author.get_username_or_nickname }}
+                    </a>
+                </span>
+                <!-- 关注用户按钮 -->
+                {% ifnotequal request.user article.author %}
+                <a class="btn {% if is_following %}btn-default{% else %}btn-teal{% endif %} btn-xs"
+                   id="attenttouser_{{ article.author.id }}"
+                   data-login="{% if not request.user.is_authenticated %}un{% endif %}login"
+                   data-action="{% if is_following %}un{% endif %}follow"
+                   onclick="attentto_user({{ article.author.id }})">
+                    {% if is_following %}
+                        <i class="fa fa-check"></i><span> 已关注</span>
+                    {% else %}
+                        <i class="fa fa-plus"></i><span>关注</span>
+                    {% endif %}
+                </a>
+                {% endifnotequal %}
+                <!-- 文章数据信息 -->
+                <div class="meta">
+                  <!-- 如果文章更新时间大于发布时间，那么使用 tooltip 显示更新时间 -->
+                  <span class="publish-time" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="最后编辑于 {{ article.updated }}">{{ article.created }}</span>
+                  <span class="wordage">字数 3801</span>
+                  <span class="views-count">阅读 {{ article.view_count }}</span>
+                  <span class="comments-count">评论 1</span>
+                  <span class="likes-count">喜欢 {{ article.total_like }}</span>
+                </div>
+              </div>
+              <!-- 如果是当前作者，加入编辑按钮 -->
+                {% ifequal request.user article.author %}
+                    <a href="javascript:void(0)" data-toggle="dropdown" class="edit dropdown-toggle">操作 <i class="fa fa-angle-down mar-lr-05"></i> </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li> <a href="{% url 'writing:edit_article' article.id %}"> <i class="fa fa-edit"></i><span>编辑文章</span> </a> </li>
+                        <li> <a onclick="deleteArticle({{ article.id }})"> <i class="fa fa-trash-o"></i><span>删除文章</span> </a> </li>
+                    </ul>
+                {% endifequal %}
+              <!-- 当前作者操作按钮结束 -->
+            </div>
+
+            <!-- 文章内容 -->
+            <div class="show-content art-content">
+                <p>{{ article.content|render_markdown }}</p>
+              <blockquote>
+                <p>作者座右铭：{{ article.author.signature }}</p>
+              </blockquote>
+            </div>
+            <!-- 文章内容结束 -->
+
+            <div class="show-foot">
+              <a class="notebook" href="#" data-toggle="tooltip" data-html="true" data-original-title="文章归属分类">
+                <i class="fa fa-file-text"></i> <span>生活</span>
+              </a>
+              <div class="copyright" data-toggle="tooltip" data-html="true" data-original-title="转载请联系作者获得授权，并标注“文章作者”。">
+                © 著作权归作者所有
+              </div>
+              <div class="modal-wrap">
+                <a id="report-modal">举报文章</a>
+              </div>
+            </div>
+          </div>
+          <div class="meta-bottom">
+            <!-- 喜欢该文章 -->
+            <div class="like">
+              {% with article_users_like=article.user_like.all article_id=article.id total_like=article.total_like%}
+              {% check_is_liked_article request article_users_like as is_liked %}
+              <div class="btn like-group {% if is_liked %}active{% endif %}" id="likearticlegroup_{{ article_id }}">
+                <div class="btn-like">
+                    <a id="likearticletaga_{{ article_id }}"
+                       data-login="{% if not request.user.is_authenticated %}un{% endif %}login"
+                       data-action="{% if is_liked %}un{% endif %}like"
+                       onclick="like_article({{ article_id }})">
+                    {% if is_liked %}
+                        <i class="fa fa-heart"></i><span>喜欢</span>
+                    {% else %}
+                        <i class="fa fa-heart-o"></i><span>喜欢</span>
+                    {% endif %}
+                    </a>
+                </div>
+                <div class="modal-wrap"><a id="likeatcount_{{ article_id }}"> {{ total_like }}</a></div>
+              </div>
+              {% endwith %}
+            </div>
+            <!-- 分享文章 -->
+            <div class="share-group">
+              <a class="share-circle share-weixin" data-target="#webchat" data-toggle="tooltip" data-original-title="分享到微信">
+                <i class="fa fa-wechat"></i>
+              </a>
+              <a class="share-circle" data-toggle="tooltip" href="javascript:void((function(s,d,e,r,l,p,t,z,c){var%20f='http://v.t.sina.com.cn/share/share.php?appkey=1515056452',u=z||d.location,p=['&amp;url=',e(u),'&amp;title=',e(t||d.title),'&amp;source=',e(r),'&amp;sourceUrl=',e(l),'&amp;content=',c||'gb2312','&amp;pic=',e(p||'')].join('');function%20a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=440,height=430,left=',(s.width-440)/2,',top=',(s.height-430)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();})(screen,document,encodeURIComponent,'','','/data/attach/topic/topicx1Sada.png', '推荐 {{ article.author.get_username_or_nickname }} 的文章 {{ article.title }}（分享自 笔下光年）','{{ article.get_absolute_url }}','页面编码gb2312|utf-8默认gb2312'));" data-original-title="分享到微博">
+                <i class="fa fa-weibo"></i>
+              </a>
+              <script type="text/javascript">document.write(['<a class="share-circle" data-toggle="tooltip"  target="_blank" data-original-title="分享到qq空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=',encodeURIComponent(location.href),'&title=',encodeURIComponent(document.title),'" target="_blank" title="分享到QQ空间"> <i class="fa fa-qq"></i><\/a>'].join(''));</script>
+            </div>
+          </div>
+          <div>
+            <div id="comment-list" class="comment-list">
+              <div>
+                <form class="new-comment" t>
+                  <a class="avatar">
+                      <img src="{% if request.user.is_authenticated %}
+                            {{ MEDIA_URL }}{{ request.user.avatar }}
+                        {% else %}
+                            {% static 'images/avatar.gif' %}
+                        {% endif %}">
+                  </a>
+                  <textarea placeholder="写下你的评论..." class="comment-area" id="commentarea_0" data-login="{% if not request.user.is_authenticated %}un{% endif %}login"></textarea>
+                  <div class="write-function-block">
+                    <div class="hint">Ctrl+Return 发表</div>
+                    <a class="btn btn-teal pull-right m-mt-10" name="comments" id="comments"
+                       onclick="submitComment({{ article.id }}, 0)">发表评论</a>
+                  </div>
+                {% csrf_token %}
+                </form>
+              </div>
+
+            {% if comment_count > 10 %}
+            <!--The most popular comments -->
+            {% get_most_popular_comments article as comments %}
+            {% if comments.count != 0 %}
+                <div id="normal-comment-list" class="normal-comment-list">
+                <div>
+                  <div>
+                    <div class="top"> <span>精彩评论</span> <span class="pull-right">一共 {{ comment_count }} 条评论</span> </div>
+                  </div>
+                  <!--精彩评论条目-->
+                  {% for comment in comments %}
+                  <div id="comment-{{ comment.id }}" class="comment">
+                    <div>
+                      <div class="author">
+                        <a href="{{ comment.get_absolute_url }}"
+                            target="_blank" class="avatar">
+                            <img src="{{ MEDIA_URL }}{{ comment.user.avatar }}">
+                        </a>
+                        <div class="info">
+                          <a href="{{ comment.get_absolute_url }}" target="_blank" class="name">
+                              {{ comment.user.get_username_or_nickname }}
+                          </a>
+                          <div class="meta"> <span>{{ forloop.counter }}楼 · {{ comment.created }}</span> </div>
+                        </div>
+                      </div>
+                      <div class="comment-wrap">
+                          <p> {{ comment.content }} </p>
+                          <div>
+                                {% with comment_user_like=comment.user_like.all comment_id=comment.id total_like=comment.total_like  %}
+                                {% check_is_liked_comment request comment_user_like as is_liked %}
+                                    <a class="btn {% if is_liked %}btn-danger{% else %}btn-default{% endif %} btn-xs" id="likecomment_{{ comment.id }}"
+                                        data-login="{% if not request.user.is_authenticated %}un{% endif %}login"
+                                        data-action="{% if is_liked %}un{% endif %}like"
+                                        onclick="like_comment({{ comment_id }})">
+                                        <i class="fa fa-thumbs-o-up"></i>
+                                        <span id="likectcount_{{ comment_id }}">{{ total_like }}</span>
+                                    </a>
+                                {% endwith %}
+
+                                <a class="btn btn-default btn-xs" style="margin-left: 16px"
+                                   id="replyatag_{{ comment.id }}"
+                                   data-login="{% if not request.user.is_authenticated %}un{% endif %}login"
+                                   onclick="addCommentReplyForm({{ comment.id }})">
+                                    <i class="fa fa-comment-o"></i> 回复
+                                </a>
+                                <!-- 如果是当前评论者 加入删除按钮 -->
+                                {% ifequal request.user comment.user %}
+                                <a class="btn btn-default btn-xs" style="margin-left: 16px" onclick="deleteComment({{ comment.id }})"
+                                    data-toggle="tooltip" data-html="true" data-original-title="确定删除?">
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i> 删除
+                                </a>
+                                {% endifequal %}
+                          </div>
+
+                          <div class="replyform_{{ comment.id }}"
+
+                               style="margin-top: 8px; margin-bottom: 60px; display: none">
+                            {% include 'reply-from.html'%}
+                          </div>
+
+                         {% if comment.parent %}
+                             <div class="comment-wrap" style="margin-top: 8px">
+                                <blockquote>
+                                <a href="{{ comment.parent.get_absolute_url}}" class="name">
+                                    @{{ comment.parent.user.get_username_or_nickname }}:
+                                </a>
+                                <p>{{ comment.parent.content }}</p>
+                                </blockquote>
+                             </div>
+
+                         {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% endif %}
+            <!--Recent comments-->
+            <div id="normal-comment-list" class="normal-comment-list recent-comment-list" >
+                  <div id="recentcomments">
+                    <div class="top"> <span>最新评论({{ comment_count }})</span> </div>
+                  </div>
+
+                  {% if recent_comments == 0 %}
+                  <!--无评论-->
+                  <div class="no-comment"></div>
+                  <div class="text"> 还没有人评论过~ </div>
+                  {% endif %}
+                  <!--评论列表-->
+                  {% include 'comments-ajax.html' %}
+            </div>
+
+              <!---->
+            </div>
+        </div>
+        <div class="side-tool">
+          <ul>
+            <li data-placement="left" data-toggle="tooltip" data-container="body" data-original-title="回到顶部">
+              <a href="#" class="function-button"><i class="fa fa-angle-up"></i></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}
+
+{% block modal_dialog %}
+<div class="modal fade bs-example-modal-sm" id="share-wechat" tabindex="-1" role="wechat">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">打开微信“扫一扫”</h4>
+      </div>
+      <div class="modal-body qrcode" class="" title="article.html">
+        <div id="qr_wxcode"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block custom_js %}
+<script src="{% static 'js/jquery.qrcode.min.js' %}" type="text/javascript"></script>
+<script type="text/javascript">
+    // 微信二维码生成
+    $('#qr_wxcode').qrcode("{{ article.get_absolute_url }}");
+
+     /* 滚动加载评论 */
+    $(document).ready(function () {
+        var page = 1;
+        var empty_page = false;
+        var block_request = false;
+
+        $(window).scroll(function() {
+        var margin = $(document).height() - $(window).height() - 200;
+            if  ($(window).scrollTop() > margin && empty_page == false && block_request == false) {
+                {% if comment_count < 10 %}
+                    return false;
+                {% endif %}
+                block_request = true;
+                page += 1;
+                $.get('?page=' + page, function(data) {
+                    if(data == '')
+                    {
+                        empty_page = true;
+                    }
+                    else {
+                        block_request = false;
+                        $('.recent-comment-list').append(data);
+                    }
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

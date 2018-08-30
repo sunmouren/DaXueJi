@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% load notifications_tags %}
+
+{% block title %}
+    通知
+{% endblock %}
+
+{% block main_content %}
+    {% notifications_unread as unread_count %}
+    <div class="container index">
+    <div class="row">
+    <div class="col-xs-12 main">
+      <!-- 用户title部分导航 -->
+       <div class="main-top">
+          <h4>我的通知</h4>
+      </div>
+       <hr>
+      <ul class="trigger-menu" data-pjax-container="#list-container">
+
+        <li class="{% ifequal request.path '/notifications/' %}active{% endifequal %}">
+            <a href="{% url 'notifications:all' %}"><i class="fa fa-list-ul"></i>全部</a>
+        </li>
+        <li class="{% ifnotequal request.path '/notifications/' %}active{% endifnotequal %}">
+            <a href="{% url 'notifications:unread' %}"><i class="fa fa-eye-slash"></i>未读({{ unread_count }})</a>
+        </li>
+      </ul>
+       <div class="list-container">
+        <ul class="note-list" id="notifications-list">
+           {% for notice in notifications %}
+                {% include 'notifications/notice.html' %}
+           {% empty %}
+               <div class="jumbotron">
+                   <h4>暂无通知</h4>
+               </div>
+           {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block modal_dialog %}
+    <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="replyModalLabel">请输入回复内容 </h4>
+          </div>
+          <div class="modal-body">
+            <form>
+{#              <div class="form-group">#}
+{#                <label for="recipient-name" class="control-label">Recipient:</label>#}
+{#                <input type="text" class="form-control" id="recipient-name">#}
+{#              </div>#}
+              <div class="form-group">
+{#                <label for="message-text" class="control-label">回复</label>#}
+                <textarea style="background-color: #f7f7f7" placeholder="回复内容..." class="form-control" id="reply-text" rows="3"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            <a class="btn btn-teal" id="send-reply" onclick="reply()">发送</a>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+
+{% block custom_js %}
+<script type="text/javascript">
+    $('#replyModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var recipient = button.data('recipient');
+        var aid = button.data('aid');
+        var pid = button.data('pid');
+
+        var modal = $(this);
+        modal.find('.modal-title').text('回复 ' + recipient);
+        modal.find('.modal-footer a').data('aid', aid);
+        modal.find('.modal-footer a').data('pid', pid);
+{#        tips(modal.find('.modal-footer a').data('aid'));#}
+    });
+
+    $('#replyModal').on('hidden.bs.modal', function () {
+        $(this).find('.modal-body textarea').val('');
+    });
+    // 在我的通知中回复评论
+    function reply() {
+        var aid = $('#send-reply').data('aid');
+        var pid = $('#send-reply').data('pid');
+        var replyText = $.trim($('#reply-text').val());
+
+{#        tips(aid, 'success');#}
+{#        tips(pid, 'success');#}
+{#        tips(replyText, 'success');#}
+
+        if (replyText == ''){
+            tips('回复不能为空！', 'danger');
+            return false;
+        }
+
+        $.ajax({
+                cache: false,
+                type : "POST",
+                data : {'aid': aid, 'pid': pid, 'content': replyText},
+                url : "/comment/submit/",
+                async: true,
+                beforeSend : function (xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                    pageLoader('show'); // loading
+                },
+                //成功返回之后调用的函数
+                success:function(data){
+                    if (data['msg'] == 'ok') {
+                        tips('回复发送成功~', 'success');
+                        $('#replyModal').modal('hide');
+                        return true;
+                    } else {
+                        tips('回复出错啦！Ps: 目前不支持有emoji表情符号！对方或已删除评论！', 'danger');
+                        return false;
+                    }
+                },
+                complete: function () {
+                   pageLoader('hide');
+                },
+
+                //调用出错执行的函数
+                error: function(){
+                    tips('好气啊 提交失败啦！Ps: 目前不支持有emoji表情符号！对方或已删除评论！', 'danger');
+                    return false;
+                }
+        });
+    }
+</script>
+{% endblock %}
+
+

@@ -1,0 +1,103 @@
+{% load staticfiles %}
+{% load user_tags %}
+    {% for action in actions %}
+        {% ifequal action.verb 'follow_topic' %}
+            {% check_is_following_topic request action.target as is_following %}
+            <li id="note-{{ action.id }}" data-note-id="{{ action.id }}">
+            <div class="content">
+              <div class="author">
+                <a class="avatar" href="{{ action.user.get_absolute_url }}">
+                    <img src="{{ MEDIA_URL }}{{ action.user.avatar }}" alt="avatar"> </a>
+                <div class="name">
+                  <a href="{{ action.user.get_absolute_url }}">
+                      {{ action.user.get_username_or_nickname }}
+                  </a>
+                  <span> 关注了专题 </span>
+                  <span class="time" data-shared-at="{{ action.created }}">{{ action.created|timesince }}前</span>
+                </div>
+              </div>
+              <div class="follow-detail">
+                <div class="info">
+                    <a class="avatar-collection" href="{{ action.target.get_absolute_url }}">
+                      <img src="{{ MEDIA_URL }}{{ action.target.avatar }}" alt="avatar"> </a>
+                    <a class="btn {% if is_following %}btn-round btn-default{% else %}btn-teal btn-circular{% endif %} pull-right"
+                       id="attenttotopic_{{ action.target.id }}"
+                       data-login="{% if not request.user.is_authenticated %}un{% endif %}login"
+                       data-action="{% if is_following %}un{% endif %}follow"
+                       onclick="attentto_cat({{ action.target.id }})">
+                        {% if is_following %}
+                            <i class="fa fa-check"></i> 已关注
+                        {% else %}
+                            <i class="fa fa-plus"></i> 关注
+                        {% endif %}
+                    </a>
+                    <a class="title" href="{{ action.target.get_absolute_url }}">{{ action.target.name }}</a>
+                    <p> <a class="text-teal" href="{{ action.target.admin.get_absolute_url }}">
+                      {{ action.target.admin.get_username_or_nickname }}</a>编，{{ action.target.articles.count }} 篇文章，{{ action.target.followers_topic.count }} 人关注 </p>
+                </div>
+                <div class="signature">
+                  <span>{{ action.target.summary }}</span>
+                </div>
+              </div>
+            </div>
+            </li>
+        {% endifequal %}
+
+        {% ifequal action.verb 'new_comment' %}
+            <li id="note-{{ action.id }}" data-note-id="{{ action.id }}">
+            <div class="content">
+              <div class="author">
+                <a class="avatar" href="{{ action.user.get_absolute_url }}"> <img src="{{ MEDIA_URL }}{{ action.user.avatar }}" alt="avatar"> </a>
+                <div class="name">
+                  <a href="{{ action.user.get_absolute_url }}">
+                      {{ action.user.get_username_or_nickname }}
+                  </a>
+                  <span> 发表了评论 </span>
+                  <span class="time" data-shared-at="{{ action.created }}">{{ action.created|timesince }}前</span>
+                </div>
+              </div>
+              <p class="comment">{{ action.target.content }}</p>
+              <blockquote>
+                <a class="title" href="{{ action.target.article.get_absolute_url }}"> {{ action.target.article.title }} </a>
+                <p class="abstract"></p>
+                <div class="meta">
+                  <a href="{{ action.target.article.author.get_absolute_url }}" class="text-teal">{{ action.target.article.author.get_username_or_nickname }}</a>
+                  <a target="_blank" href="{{ action.target.article.get_absolute_url }}"> <i class="fa fa-eye"></i> {{ action.target.article.view_count }} </a>
+                  <a target="_blank" href="{{ action.target.article.get_absolute_url }}#comments"> <i class="fa fa-comment-o"></i> {{ action.target.article.comments.count }} </a>
+                  <span><i class=" fa fa-heart-o"></i> {{ action.target.article.total_like }}</span>
+                </div>
+              </blockquote>
+            </div>
+          </li>
+        {% endifequal %}
+        
+        {% ifequal action.verb 'new_article' %}
+             <li id="note-{{ action.id }}" data-note-id="{{ action.id }}" class="have-img">
+            <a class="wrap-img" href="{{ action.target.get_absolute_url }}" target="_blank"> <img src="{% static 'uploads/topicx1Sada.png' %}"> </a>
+            <div class="content">
+              <div class="author"> <a class="avatar" href="{{ action.user.get_absolute_url }}"> <img src="{{ MEDIA_URL }}{{ action.user.avatar }}" alt="avatar"> </a>
+                <div class="name">
+                  <a href="{{ action.user.get_absolute_url }}">
+                      {{ action.user.get_username_or_nickname }}
+                  </a>
+                  <span> 发表了文章 </span>
+                  <span class="time" data-shared-at="{{ action.created }}">{{ action.created|timesince }}前</span>
+                </div>
+              </div>
+              <a class="title" target="_blank"  href="{{ action.target.get_absolute_url }}">{{ action.target.title }}</a>
+              <p class="abstract">{{ action.target.summary }}</p>
+              <div class="meta">
+                <a target="_blank" href="{{ action.target.get_absolute_url }}"> <i class="fa fa-eye"></i> {{ action.target.view_count }} </a>
+                <a target="_blank" href="{{ action.target.get_absolute_url }}#comments" > <i class="fa fa-comment-o"></i> {{ action.target.comments.count }} </a>
+                <span><i class=" fa fa-heart-o"></i> {{ action.target.total_like }}</span>
+              </div>
+            </div>
+          </li>
+        {% endifequal %}
+    {% endfor %}
+    
+        
+
+        
+         
+        

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}
+    关注列表
+{% endblock %}
+
+{% block main_content %}
+    <div class="container index">
+    <div class="row">
+    <div class="col-xs-12 col-sm-9 aside">
+      <!-- 用户title部分导航 -->
+       <div class="main-top">
+          <h4>{{ main_top_info }}</h4>
+      </div>
+       <hr>
+      <ul class="trigger-menu" data-pjax-container="#list-container">
+        <li class="{% ifequal current_page 'following_user' %}active{% endifequal %}">
+            <a href="{{ user_object.get_following_user_list }}"><i class="fa fa-user-circle-o"></i> 作者</a>
+        </li>
+        <li class="{% ifequal current_page 'following_topic' %}active{% endifequal %}">
+            <a href="{{ user_object.get_following_topic_list }}"><i class="fa fa-lemon-o"></i> 专题</a>
+        </li>
+      </ul>
+       <div class="recommend" id="list-container">
+        <ul class="list" id="following-list">
+            {% ifequal current_page 'following_user' %}
+                {% include 'public-user-list-ajax.html' %}
+            {% endifequal %}
+
+            {% ifequal current_page 'following_topic' %}
+                {% include 'public-topic-list-ajax.html' %}
+            {% endifequal %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block custom_js %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var page = 1;
+        var empty_page = false;
+        var block_request = false;
+
+        $(window).scroll(function() {
+        var margin = $(document).height() - $(window).height() - 200;
+            if  ($(window).scrollTop() > margin && empty_page == false && block_request == false) {
+                {% if count < 10 %}
+                    return false;
+                {% endif %}
+                block_request = true;
+                page += 1;
+                $.get('?page=' + page, function(data) {
+                    if(data == '')
+                    {
+                        empty_page = true;
+                    }
+                    else {
+                        block_request = false;
+                        $('#following-list').append(data);
+                    }
+                });
+            }
+        });
+    });
+
+</script>
+{% endblock %}
