@@ -138,17 +138,17 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # my settings
 LOGIN_URL = '/user/login/'
 # 自定义User时
 AUTH_USER_MODEL = 'users.UserProfile'
 # mask package 为 源/根 时
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
-# 引入静态文件
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+# # 引入静态文件
+# STATICFILES_DIRS = (
+#     os.path.join(BASE_DIR, 'static'),
+# )
 # 设置上传文件的路径
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
