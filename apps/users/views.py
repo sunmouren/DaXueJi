@@ -1,13 +1,21 @@
+import time
+import requests
+from PIL import Image
+from io import BytesIO
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.files.uploadedfile import UploadedFile, InMemoryUploadedFile
 from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.conf import settings
+
 
 from topics.models import Topic
 from utils.email_send import send_register_email
@@ -18,6 +26,7 @@ from actions.models import Action
 
 from .models import UserProfile, EmailVerifyRecord, FollowUser, FollowTopic
 from .forms import LoginForm, RegisterForm, UserProfileForm, ForgetPwdForm, ResetPwdForm
+from .wb_oauth import OAuthWB
 
 
 class LoginView(View):
@@ -557,3 +566,58 @@ def get_user_actions(user):
     """
     actions = [action if action.target else action.delete() for action in Action.objects.filter(user=user)]
     return actions
+
+
+def oauth_weibo(request):
+    """
+    微博授权页面登录
+    :param request:
+    :return:
+    """
+    url = 'https://api.weibo.com/oauth2/authorize?client_id={0}&redirect_uri={1}'.format(settings.WEIBO_APP_ID, settings.WEIBO_REDIRECT_URI)
+    return HttpResponseRedirect(url)
+
+
+def weibo_login(request):
+    code = request.GET.get('code', None)
+    sina_weibo = OAuthWB(settings.WEIBO_APP_ID, settings.WEIBO_APP_KEY, settings.WEIBO_REDIRECT_URI)
+    user_info = sina_weibo.get_access_token(code)
+    # 防止还没请求到token就进行下一步
+    time.sleep(0.1)
+    user = UserProfile.objects.filter(openid=user_info['uid']).first()
+    if user:
+        login(request, user)
+        return HttpResponseRedirect(reverse('index'))
+    else:
+        new_user_info = sina_weibo.get_user_info(user_info)
+        new_user = UserProfile()
+        new_user.openid = new_user_info['id']
+        new_user.nickname = new_user_info['name']
+        new_user.signature = new_user_info['description']
+        new_user.avatar = get_user_avatar(img_src=new_user_info['profile_image_url'])
+
+        # 注意这里保存出错
+        new_user.save()
+        login(request, new_user)
+        return HttpResponseRedirect(reverse('index'))
+
+
+def get_user_avatar(img_src):
+    """
+    处理第三方返回的头像
+    :param img_url:
+    :return:
+    """
+    # 获取图片名字
+    avatar_name = img_src.split('/')[-1]
+    # 通过第三方返回的头像地址加载图片
+    response = requests.get(img_src)
+    avatar_io = BytesIO(response.content)
+    if response.status_code == 200:
+        image = Image.open(avatar_io)
+        # 转换为 InMemoryUploadedFile 以便于可以保存到数据库中
+        avatar_file = InMemoryUploadedFile(file=avatar_io, field_name=None, name=avatar_name,
+                                           content_type=image.format, size=image.size, charset=None)
+        return avatar_file
+    else:
+        return None

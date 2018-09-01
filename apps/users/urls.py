@@ -13,7 +13,7 @@ from .views import LoginView, RegisterView, ActiveUserView, \
     FollowUserAjax, FollowTopicAjax, UserArticleListView, \
     UserCommentsListView, UserFollowerListView, UserFollowingTopicListView, \
     UserFollowingUserListView, UserActionListView, EditUserProfileView, ForgetPwdView, \
-    GetResetPwdView, PostResetPwdView
+    GetResetPwdView, PostResetPwdView, oauth_weibo, weibo_login
 
 # 要写上app的名字
 app_name = "users"
@@ -36,5 +36,8 @@ urlpatterns = [
     path('<int:user_id>/following/topics', UserFollowingTopicListView.as_view(), name='user_following_topics'),
     path('follow/user/', FollowUserAjax.as_view(), name='follow_user'),
     path('follow/topic/', FollowTopicAjax.as_view(), name='follow_topic'),
-    path('<int:user_id>/profile/', EditUserProfileView.as_view(), name='edit_profile')
+    path('<int:user_id>/profile/', EditUserProfileView.as_view(), name='edit_profile'),
+    # 微博登录授权页面
+    path('oauth/weibo/', oauth_weibo, name='oauth_weibo'),
+    path('weibo/login/', weibo_login, name='weibo_login'),
 ]

@@ -10,7 +10,7 @@
                     <img src="{{ MEDIA_URL }}{{ action.user.avatar }}" alt="avatar"> </a>
                 <div class="name">
                   <a href="{{ action.user.get_absolute_url }}">
-                      {{ action.user.get_username_or_nickname }}
+                      {{ action.user }}
                   </a>
                   <span> 关注了专题 </span>
                   <span class="time" data-shared-at="{{ action.created }}">{{ action.created|timesince }}前</span>
@@ -21,7 +21,7 @@
                     <a class="avatar-collection" href="{{ action.target.get_absolute_url }}">
                       <img src="{{ MEDIA_URL }}{{ action.target.avatar }}" alt="avatar"> </a>
                     <a class="btn {% if is_following %}btn-round btn-default{% else %}btn-teal btn-circular{% endif %} pull-right"
-                       id="attenttotopic_{{ action.target.id }}"
+                       id="attenttocat_{{ action.target.id }}"
                        data-login="{% if not request.user.is_authenticated %}un{% endif %}login"
                        data-action="{% if is_following %}un{% endif %}follow"
                        onclick="attentto_cat({{ action.target.id }})">
@@ -33,7 +33,7 @@
                     </a>
                     <a class="title" href="{{ action.target.get_absolute_url }}">{{ action.target.name }}</a>
                     <p> <a class="text-teal" href="{{ action.target.admin.get_absolute_url }}">
-                      {{ action.target.admin.get_username_or_nickname }}</a>编，{{ action.target.articles.count }} 篇文章，{{ action.target.followers_topic.count }} 人关注 </p>
+                      {{ action.target.admin }}</a>编，{{ action.target.articles.count }} 篇文章，{{ action.target.followers_topic.count }} 人关注 </p>
                 </div>
                 <div class="signature">
                   <span>{{ action.target.summary }}</span>
@@ -50,7 +50,7 @@
                 <a class="avatar" href="{{ action.user.get_absolute_url }}"> <img src="{{ MEDIA_URL }}{{ action.user.avatar }}" alt="avatar"> </a>
                 <div class="name">
                   <a href="{{ action.user.get_absolute_url }}">
-                      {{ action.user.get_username_or_nickname }}
+                      {{ action.user }}
                   </a>
                   <span> 发表了评论 </span>
                   <span class="time" data-shared-at="{{ action.created }}">{{ action.created|timesince }}前</span>
@@ -61,7 +61,7 @@
                 <a class="title" href="{{ action.target.article.get_absolute_url }}"> {{ action.target.article.title }} </a>
                 <p class="abstract"></p>
                 <div class="meta">
-                  <a href="{{ action.target.article.author.get_absolute_url }}" class="text-teal">{{ action.target.article.author.get_username_or_nickname }}</a>
+                  <a href="{{ action.target.article.author.get_absolute_url }}" class="text-teal">{{ action.target.article.author }}</a>
                   <a target="_blank" href="{{ action.target.article.get_absolute_url }}"> <i class="fa fa-eye"></i> {{ action.target.article.view_count }} </a>
                   <a target="_blank" href="{{ action.target.article.get_absolute_url }}#comments"> <i class="fa fa-comment-o"></i> {{ action.target.article.comments.count }} </a>
                   <span><i class=" fa fa-heart-o"></i> {{ action.target.article.total_like }}</span>
@@ -70,15 +70,15 @@
             </div>
           </li>
         {% endifequal %}
-        
+
         {% ifequal action.verb 'new_article' %}
              <li id="note-{{ action.id }}" data-note-id="{{ action.id }}" class="have-img">
-            <a class="wrap-img" href="{{ action.target.get_absolute_url }}" target="_blank"> <img src="{% static 'uploads/topicx1Sada.png' %}"> </a>
+            <a class="wrap-img" href="{{ action.target.get_absolute_url }}" target="_blank"> <img src="{{ MEDIA_URL }}{{  action.target.cover_picture }}"> </a>
             <div class="content">
               <div class="author"> <a class="avatar" href="{{ action.user.get_absolute_url }}"> <img src="{{ MEDIA_URL }}{{ action.user.avatar }}" alt="avatar"> </a>
                 <div class="name">
                   <a href="{{ action.user.get_absolute_url }}">
-                      {{ action.user.get_username_or_nickname }}
+                      {{ action.user }}
                   </a>
                   <span> 发表了文章 </span>
                   <span class="time" data-shared-at="{{ action.created }}">{{ action.created|timesince }}前</span>

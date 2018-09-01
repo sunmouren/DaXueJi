@@ -68,5 +68,4 @@ urlpatterns = [
     # api-auth
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
-
 ]

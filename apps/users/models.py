@@ -7,6 +7,7 @@ from topics.models import Topic
 
 
 class UserProfile(AbstractUser):
+    openid = models.CharField(max_length=128, blank=True, null=True, verbose_name='oauth_id')
     gender_choices = (('male', '男'), ('female', '女'))
     nickname = models.CharField(max_length=30, blank=True,
                                 null=True, verbose_name='昵称')

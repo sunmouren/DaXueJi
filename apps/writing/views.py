@@ -110,6 +110,7 @@ class AddArticleView(LoginRequiredMixin, View):
 
     def post(self, request):
         article_form = ArticleForm(data=request.POST, files=request.FILES)
+        print(request.FILES)
         if article_form.is_valid():
             try:
                 new_article = article_form.save(commit=False)

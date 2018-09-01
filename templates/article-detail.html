@@ -50,9 +50,9 @@
                 <div class="meta">
                   <!-- 如果文章更新时间大于发布时间，那么使用 tooltip 显示更新时间 -->
                   <span class="publish-time" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="最后编辑于 {{ article.updated }}">{{ article.created }}</span>
-                  <span class="wordage">字数 3801</span>
+{#                  <span class="wordage">字数 3801</span>#}
                   <span class="views-count">阅读 {{ article.view_count }}</span>
-                  <span class="comments-count">评论 1</span>
+                  <span class="comments-count">评论 {{ article.comments.count }}</span>
                   <span class="likes-count">喜欢 {{ article.total_like }}</span>
                 </div>
               </div>
@@ -115,7 +115,7 @@
               <a class="share-circle share-weixin" data-target="#webchat" data-toggle="tooltip" data-original-title="分享到微信">
                 <i class="fa fa-wechat"></i>
               </a>
-              <a class="share-circle" data-toggle="tooltip" href="javascript:void((function(s,d,e,r,l,p,t,z,c){var%20f='http://v.t.sina.com.cn/share/share.php?appkey=1515056452',u=z||d.location,p=['&amp;url=',e(u),'&amp;title=',e(t||d.title),'&amp;source=',e(r),'&amp;sourceUrl=',e(l),'&amp;content=',c||'gb2312','&amp;pic=',e(p||'')].join('');function%20a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=440,height=430,left=',(s.width-440)/2,',top=',(s.height-430)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();})(screen,document,encodeURIComponent,'','','/data/attach/topic/topicx1Sada.png', '推荐 {{ article.author.get_username_or_nickname }} 的文章 {{ article.title }}（分享自 笔下光年）','{{ article.get_absolute_url }}','页面编码gb2312|utf-8默认gb2312'));" data-original-title="分享到微博">
+              <a class="share-circle" data-toggle="tooltip" href="javascript:void((function(s,d,e,r,l,p,t,z,c){var%20f='http://v.t.sina.com.cn/share/share.php?appkey=1515056452',u=z||d.location,p=['&amp;url=',e(u),'&amp;title=',e(t||d.title),'&amp;source=',e(r),'&amp;sourceUrl=',e(l),'&amp;content=',c||'gb2312','&amp;pic=',e(p||'')].join('');function%20a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=440,height=430,left=',(s.width-440)/2,',top=',(s.height-430)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();})(screen,document,encodeURIComponent,'','','/data/attach/topic/topicx1Sada.png', '推荐 {{ article.author.get_username_or_nickname }} 的文章 {{ article.title }}','{{ article.get_absolute_url }}','页面编码gb2312|utf-8默认gb2312'));" data-original-title="分享到微博">
                 <i class="fa fa-weibo"></i>
               </a>
               <script type="text/javascript">document.write(['<a class="share-circle" data-toggle="tooltip"  target="_blank" data-original-title="分享到qq空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=',encodeURIComponent(location.href),'&title=',encodeURIComponent(document.title),'" target="_blank" title="分享到QQ空间"> <i class="fa fa-qq"></i><\/a>'].join(''));</script>

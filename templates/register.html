@@ -22,40 +22,48 @@
       <img class="img-responsive" src="{% static 'images/logo.jpg' %}" alt="logo" />
     </a>
     <div class="login-form">
-      <form action="{% url 'users:register' %}" method="post" target="_top">
-        {% csrf_token %}
-        <div class="form-group has-icon">
-          <label class="control-label" for="email">邮箱</label>
-          <span class="fa fa-envelope-o form-control-icon" aria-hidden="true"></span>
-          <input id="email" class="form-control" type="email" name="email"  placeholder="邮箱注册" required autocomplete="off" />
-        </div>
-        <div class="form-group has-icon">
-          <label for="password">密码</label>
-          <span class="fa fa-lock form-control-icon" aria-hidden="true"></span>
-          <input id="password" class="form-control" type="password" name="password"  placeholder="设置密码" required />
-        </div>
-        <div class="form-group sign-up-msg">
-          点击 “注册” 即表示您同意并愿意遵守 笔下光年 <a href="#" class="text-teal">用户协议</a> 和 <a href="#" class="text-teal">隐私政策</a> 。
-        </div>
-        <button class="btn btn-teal btn-block" type="submit">注册</button>
         <div class="more-sign">
           <h6>社交帐号直接注册</h6>
           <ul>
-            <li><a class="weibo" href="#"><i class="fa fa-weibo"></i></a></li>
+            <li><a class="weibo" href="{% url 'users:oauth_weibo' %}"><i class="fa fa-weibo"></i></a></li>
             <li><a class="weixin" href="#"><i class="fa fa-wechat"></i></a></li>
             <li><a class="qq" href="#"><i class="fa fa-qq"></i></a></li>
           </ul>
         </div>
-          <!--相关错误提示-->
-        {% if register_form.errors.items %}
-            <div class="alert alert-danger">
-                <a href="#" class="close" data-dismiss="alert" >&times;</a>
-                {% for key, error in register_form.errors.items %}
-                    {{ error }}
-                {% endfor %}
-            </div>
-        {% endif %}
-      </form>
+{#      <form action="{% url 'users:register' %}" method="post" target="_top">#}
+{#        {% csrf_token %}#}
+{#        <div class="form-group has-icon">#}
+{#          <label class="control-label" for="email">邮箱</label>#}
+{#          <span class="fa fa-envelope-o form-control-icon" aria-hidden="true"></span>#}
+{#          <input id="email" class="form-control" type="email" name="email"  placeholder="邮箱注册" required autocomplete="off" />#}
+{#        </div>#}
+{#        <div class="form-group has-icon">#}
+{#          <label for="password">密码</label>#}
+{#          <span class="fa fa-lock form-control-icon" aria-hidden="true"></span>#}
+{#          <input id="password" class="form-control" type="password" name="password"  placeholder="设置密码" required />#}
+{#        </div>#}
+{#        <div class="form-group sign-up-msg">#}
+{#          点击 “注册” 即表示您同意并愿意遵守 笔下光年 <a href="#" class="text-teal">用户协议</a> 和 <a href="#" class="text-teal">隐私政策</a> 。#}
+{#        </div>#}
+{#        <button class="btn btn-teal btn-block" type="submit">注册</button>#}
+{#        <div class="more-sign">#}
+{#          <h6>社交帐号直接注册</h6>#}
+{#          <ul>#}
+{#            <li><a class="weibo" href="#"><i class="fa fa-weibo"></i></a></li>#}
+{#            <li><a class="weixin" href="#"><i class="fa fa-wechat"></i></a></li>#}
+{#            <li><a class="qq" href="#"><i class="fa fa-qq"></i></a></li>#}
+{#          </ul>#}
+{#        </div>#}
+{#          <!--相关错误提示-->#}
+{#        {% if register_form.errors.items %}#}
+{#            <div class="alert alert-danger">#}
+{#                <a href="#" class="close" data-dismiss="alert" >&times;</a>#}
+{#                {% for key, error in register_form.errors.items %}#}
+{#                    {{ error }}#}
+{#                {% endfor %}#}
+{#            </div>#}
+{#        {% endif %}#}
+{#      </form>#}
     </div>
   </div>
 </div>
