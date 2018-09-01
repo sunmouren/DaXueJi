@@ -190,7 +190,7 @@ REST_FRAMEWORK = {
 # 微博登录
 WEIBO_APP_ID = "1474252809"
 WEIBO_APP_KEY = "069a806ba43056db233d2a1c087a9d0d"
-WEIBO_REDIRECT_URI = "http://127.0.0.1:8000/user/weibo/login/"
+WEIBO_REDIRECT_URI = "http://www.sunmouren.xin/user/weibo/login/"
 
 
 
