@@ -7,7 +7,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     """
     用户信息管理
     """
-    list_display = ['openid', 'username', 'nickname', 'signature', 'gender', 'date_joined', 'avatar']
+    list_display = ['username', 'nickname', 'signature', 'gender', 'date_joined', 'avatar', 'openid']
     search_fields = ['username', 'nickname', 'signature', 'gender']
     list_filter = ['gender', 'date_joined']
 
