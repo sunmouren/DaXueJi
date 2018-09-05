@@ -592,7 +592,7 @@ def weibo_login(request):
         new_user_info = sina_weibo.get_user_info(user_info)
         new_user = UserProfile()
         new_user.openid = new_user_info['id']
-        new_user.username = new_user_info['name']
+        new_user.username = new_user_info['name'] + str(new_user_info['id'])
         new_user.nickname = new_user_info['name']
         new_user.signature = new_user_info['description']
         new_user.avatar = get_user_avatar(img_src=new_user_info['profile_image_url'])
