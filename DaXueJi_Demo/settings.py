@@ -188,8 +188,8 @@ REST_FRAMEWORK = {
 }
 
 # 微博登录
-WEIBO_APP_ID = "1474252809"
-WEIBO_APP_KEY = "069a806ba43056db233d2a1c087a9d0d"
+WEIBO_APP_ID = "2003416765"
+WEIBO_APP_KEY = "2702c87e3527d7c914e64c4d7fd069b0"
 WEIBO_REDIRECT_URI = "http://www.sunmouren.xin/user/weibo/login/"
 
 

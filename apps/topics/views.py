@@ -76,14 +76,11 @@ class CanRecordArticleAJax(LoginRequiredMixin, View):
     """
     def get(self, request):
         topic_id = request.GET.get('tid')
-        print(topic_id)
         if topic_id:
             topic = get_object_or_404(Topic, id=int(topic_id))
             recorded_articles = topic.articles.filter(author=request.user)
-            print(recorded_articles)
             article_ids = [article.id for article in recorded_articles]
             articles = Article.objects.filter(author=request.user).exclude(id__in=article_ids)
-            print(articles)
             return render(request, 'modal-article-ajax.html', {
                 'can_record_articles': articles
             })
