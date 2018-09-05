@@ -590,9 +590,8 @@ def weibo_login(request):
         return HttpResponseRedirect(reverse('index'))
     else:
         new_user_info = sina_weibo.get_user_info(user_info)
-        new_user = UserProfile()
+        new_user = UserProfile(username=new_user_info['id'])
         new_user.openid = new_user_info['id']
-        new_user.username = new_user_info['id']
         new_user.nickname = new_user_info['name']
         new_user.signature = new_user_info['description']
         new_user.avatar = get_user_avatar(img_src=new_user_info['profile_image_url'])
