@@ -34,9 +34,9 @@
       <form action="{% url 'users:login' %}" method="post" target="_top">
         {% csrf_token %}
         <div class="form-group has-icon {% if login_form.errors.username %}has-error{% endif %}">
-          <label class="control-label" for="email">邮箱/手机号</label>
+          <label class="control-label" for="email">邮箱</label>
           <span class="fa fa-envelope-o form-control-icon" aria-hidden="true"></span>
-          <input id="email" class="form-control" type="text" name="username"  placeholder="邮箱/手机号" required autocomplete="off" />
+          <input id="email" class="form-control" type="text" name="username"  placeholder="邮箱" required autocomplete="off" />
         </div>
         <div class="form-group has-icon {% if login_form.errors.username %}has-error{% endif %}">
           <label for="password">密码</label>
@@ -49,14 +49,14 @@
         </div>
         <button class="btn btn-teal btn-block" id="login" type="submit">登 录</button>
 
-        <div class="more-sign">
-          <h6>社交帐号登录</h6>
-          <ul>
-            <li><a class="weibo" href="{% url 'users:oauth_weibo' %}"><i class="fa fa-weibo"></i></a></li>
-            <li><a class="weixin" href="#"><i class="fa fa-wechat"></i></a></li>
-            <li><a class="qq" href="#"><i class="fa fa-qq"></i></a></li>
-          </ul>
-        </div>
+{#        <div class="more-sign">#}
+{#          <h6>社交帐号登录</h6>#}
+{#          <ul>#}
+{#            <li><a class="weibo" href="{% url 'users:oauth_weibo' %}"><i class="fa fa-weibo"></i></a></li>#}
+{#            <li><a class="weixin" href="#"><i class="fa fa-wechat"></i></a></li>#}
+{#            <li><a class="qq" href="#"><i class="fa fa-qq"></i></a></li>#}
+{#          </ul>#}
+{#        </div>#}
         <!--账户密码错误提示-->
         {% if msg or login_form.errors.items %}
              <div class="alert alert-danger">
