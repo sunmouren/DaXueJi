@@ -23,14 +23,14 @@
       <img class="img-responsive" src="{% static 'images/logo.jpg' %}" alt="" />
     </a>
     <div class="login-form">
-        <div class="more-sign">
-          <h6>社交帐号登录</h6>
-          <ul>
-            <li><a class="weibo" href="{% url 'users:oauth_weibo' %}"><i class="fa fa-weibo"></i></a></li>
-            <li><a class="weixin" href="#"><i class="fa fa-wechat"></i></a></li>
-            <li><a class="qq" href="#"><i class="fa fa-qq"></i></a></li>
-          </ul>
-        </div>
+{#        <div class="more-sign">#}
+{#          <h6>社交帐号登录</h6>#}
+{#          <ul>#}
+{#            <li><a class="weibo" href="{% url 'users:oauth_weibo' %}"><i class="fa fa-weibo"></i></a></li>#}
+{#            <li><a class="weixin" href="#"><i class="fa fa-wechat"></i></a></li>#}
+{#            <li><a class="qq" href="#"><i class="fa fa-qq"></i></a></li>#}
+{#          </ul>#}
+{#        </div>#}
       <form action="{% url 'users:login' %}" method="post" target="_top">
         {% csrf_token %}
         <div class="form-group has-icon {% if login_form.errors.username %}has-error{% endif %}">

@@ -163,7 +163,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 AUTHENTICATION_BACKENDS = (
     'users.views.CustomBackend',
 )
-# 注册时，发送邮箱验证码
+
+# qq POP3/SMTP 配置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = "smtp.qq.com"  # SMTP服务器主机
 EMAIL_PORT = 110             # 端口
 EMAIL_HOST_USER = "2826573494@qq.com"       # 邮箱地址
