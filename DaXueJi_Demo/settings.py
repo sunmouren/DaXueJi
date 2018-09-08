@@ -165,10 +165,10 @@ AUTHENTICATION_BACKENDS = (
 )
 # 注册时，发送邮箱验证码
 EMAIL_HOST = "smtp.qq.com"  # SMTP服务器主机
-EMAIL_PORT = 25             # 端口
+EMAIL_PORT = 110             # 端口
 EMAIL_HOST_USER = "2826573494@qq.com"       # 邮箱地址
 EMAIL_HOST_PASSWORD = "nldauvwchhdjdccc"    # 密码
-EMAIL_USE_TLS= True
+EMAIL_USE_TLS = True
 EMAIL_FROM = "2826573494@qq.com"            # 邮箱地址
 
 # 分页一些配置

@@ -49,7 +49,7 @@ def send_register_email(email, send_type="register"):
 
     if send_type == 'register':
         email_title = "Python技术杂货铺注册激活链接"
-        email_body = "请点击下面的链接激活您的账号: http://127.0.0.1:8000/{0}/active/{1}".format('user', code)
+        email_body = "请点击下面的链接激活您的账号: http://www.sunmouren.xin/{0}/active/{1}".format('user', code)
         # 使用Django内置函数完成邮件发送，四个参数：主题，邮件内容，发件人邮箱地址，收件人（是一个字符串列表）
         send_status = send_mail(email_title, email_body, EMAIL_FROM, [email])
         # 如果发送成功
@@ -58,7 +58,7 @@ def send_register_email(email, send_type="register"):
 
     if send_type == 'forget':
         email_title = "Python技术杂货铺找回密码链接"
-        email_body = "请点击下面的链接找回您的密码链接: http://127.0.0.1:8000/{0}/get/reset/{1}".format('user', code)
+        email_body = "请点击下面的链接找回您的密码链接: http://www.sunmouren.xin/{0}/get/reset/{1}".format('user', code)
         # 使用Django内置函数完成邮件发送，四个参数：主题，邮件内容，发件人邮箱地址，收件人（是一个字符串列表）
         send_status = send_mail(email_title, email_body, EMAIL_FROM, [email])
         # 如果发送成功
